@@ -68,21 +68,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="http://github.com/epsilonhalbe/Talks/">slides</a> LikeLegos</li>
 </ul>
 </section></section>
-<section><section id="intro" class="titleslide slide level1"><h1>Intro</h1></section><section id="organisatorisches" class="slide level2">
-<h1>Organisatorisches</h1>
-<p>Bei Fragen bitte einfach unterbrechen!</p>
-</section><section id="warum-haskell-wie-lego" class="slide level2">
+<section><section id="intro" class="titleslide slide level1"><h1>Intro</h1></section><section id="warum-haskell-wie-lego" class="slide level2">
 <h1>Warum Haskell wie Lego?</h1>
-<!--
-Beim Vorbereiten meines Vortrags habe ich überlegt wie ich Leuten so etwas
-abstraktes wie Haskell erkläre, ohne dass ich Programmierkenntnisse voraussetze.
-Dabei ist mir beim Thema "Immutability" eine Stelle aus "Sophies Welt"
-eingefallen, in der das griechische Atommodell mit Lego verglichen wurde.
-Ausgehend von dieser Idee sind mir immer mehr Parallelen zwischen diesen beiden
-Dingen eingefallen und ihr müsst euch den Blödsinn jetzt anhören.
--->
-
-
+<p>Beim Vorbereiten meines Vortrags habe ich überlegt wie ich Leuten so etwas abstraktes wie Haskell erkläre, ohne dass ich Programmierkenntnisse voraussetze. Dabei ist mir beim Thema &quot;Immutability&quot; eine Stelle aus &quot;Sophies Welt&quot; eingefallen, in der das griechische Atommodell mit Lego verglichen wurde. Ausgehend von dieser Idee sind mir immer mehr Parallelen zwischen diesen beiden Dingen eingefallen und ihr müsst euch den Blödsinn jetzt anhören.</p>
 </section><section id="schlagwörter" class="slide level2">
 <h1>Schlagwörter</h1>
 <ul>
@@ -158,7 +146,8 @@ f x y <span class="fu">=</span> <span class="dv">2</span> <span class="fu">*</sp
 <p>Funktionen haben keinen besonderen Status, man kann sie wie jeden anderen Typ in Variablen speichern, in Listen packen oder als Parameter in anderen Funktionen verwenden.</p>
 </section><section id="wtf-ist-funktional-in-lego" class="slide level2">
 <h1>WTF ist Funktional in LEGO</h1>
-<p>Baupläne!</p>
+<p>Baupläne! Baupläne sind genauso wie Haskell-Funktionen, immer gleich. Soll heißen wenn ich einen Bauplan zwei mal hintereinander ausführe kommt das geiche Modell heraus bzw. bei Haskell der gleiche Wert.</p>
+<p>Weiters werden in Baupläne kleine Teilbaupläne verwendet - auch in Haskell-Funktionen werden kleinere Funktionen als &quot;Bausteine&quot; verwendet.</p>
 </section><section id="beispiele-1" class="slide level2">
 <h1>Beispiele</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> a x <span class="fu">=</span> <span class="dv">10</span><span class="fu">*</span>x
@@ -173,14 +162,6 @@ f x y <span class="fu">=</span> <span class="dv">2</span> <span class="fu">*</sp
 <span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> d <span class="fu">=</span> \x y <span class="ot">-&gt;</span> x<span class="fu">*</span>y
 <span class="dt">Prelude</span><span class="fu">&gt;</span> d <span class="dv">2</span> <span class="dv">3</span>
 <span class="dv">6</span></code></pre>
-<!--
-
-Den Ausdruck in Beispiel `c` und `d` nennt man anonyme Funktion oder
-Lambdafunktion, der Backslash wurde aus visueller Analogie gewählt - `\ ` schaut
-fast aus wie `λ` und dieses Lambda ist genau jenes, das Alonzo Church in seinem
-**lambda calculus** geprägt hat.
--->
-
 </section></section>
 <section><section id="haskell-ist-lazy" class="titleslide slide level1"><h1>Haskell ist &quot;lazy&quot;</h1></section><section id="lazy" class="slide level2">
 <h1>Lazy</h1>
@@ -262,13 +243,13 @@ pprint <span class="fu">$</span> zipWith setY (map (\x <span class="ot">-&gt;</s
 <h1>Sonstige Tools</h1>
 <ul>
 <li>HLint - ein ausgezeichnetes Tool das Codestyle verbessert</li>
+<li><a href="http://hackage.haskell.org/">Hackage</a> - das zentrale Code-Repository</li>
 <li>Cabal - der Paketmanager von Haskell</li>
 <li>Hoogle - eine Suchmaschine die es ermöglicht nach Funktionen zu suchen</li>
 <li>Hayoo - noch eine Suchmaschine, die noch mehr Pakete durchsucht</li>
 <li><a href="http://stackoverflow.com/questions/tagged/haskell">www.stackoverflow.com</a></li>
 </ul>
 </section></section>
-<section><section id="next-use-markdown-for-website-presentations-and-books" class="titleslide slide level1"><h1>NEXT: Use Markdown for Website, Presentations and Books</h1></section></section>
     </div>
   </div>
 
