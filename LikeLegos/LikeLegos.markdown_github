@@ -24,6 +24,16 @@ Martin Heuschober
 Intro
 =====
 
+Organisatorisches
+-----------------
+<!--
+Wenn Fragen auftauchen, bitte unterbrechen und gleich Fragen stellen! Wenn ich
+am Ende des Vortrags irgendwas von Folie 3 erklären muss dann ist wahrscheinlich
+alles nach Folie 3 unklar. Deshalb gleich unterbrechen!
+-->
+Bei Fragen bitte einfach unterbrechen!
+
+
 Warum Haskell wie Lego?
 -----------------------
 <!--
@@ -34,49 +44,7 @@ eingefallen, in der das griechische Atommodell mit Lego verglichen wurde.
 Ausgehend von dieser Idee sind mir immer mehr Parallelen zwischen diesen beiden
 Dingen eingefallen und ihr müsst euch den Blödsinn jetzt anhören.
 -->
-Organisatorisches
------------------
-<!--
-Wenn Fragen auftauchen, bitte unterbrechen und gleich Fragen stellen! Wenn ich
-am Ende des Vortrags irgendwas von Folie 3 erklären muss dann ist wahrscheinlich
-alles nach Folie 3 unklar. Deshalb gleich unterbrechen!
--->
-Bei Fragen bitte einfach unterbrechen!
 
-History
--------
-
- - 1932 - LEGO wird erfunden
-
- - 1936 - Alan Turing erfindet die "Turing Machine"
-
- - 1936 - Alonzo Church veröffentlicht eine äquivalente Theorie, das sogenannte
-   *lambda calculus*
-
- - 60er/70er LISP, eine Programmiersprache basierend auf dem *lambda calculus*,
-   wird erfunden
-
---------------------------------------------------------------------------------
-
- - 1990 - Das Haskell Commitee veröffentlicht Haskell 1.0 (nach 3 Jahren
-   Arbeit);
-
- - 90er C++, Java, Python, Perl und Ruby werden erfunden oder erfreuen sich
-   immer mehr an Bedeutung
-
- - heute
-    + viele "alte" Sprachen sind zu Recht vergessen
-    + LISP feiert sein Comeback
-    + Haskell hat auch so seine Nische
-
-Wer verwendet heutzutage Haskell?
----------------------------------
-
- - Universitäten
- - Banken (z.B. Standard Chartered)
- - Microsoft
- - Facebook
- - Galois Inc., FPComplete, Well-Typed
 
 Schlagwörter
 ------------
@@ -228,13 +196,14 @@ Prelude> let d = \x y -> x*y
 Prelude> d 2 3
 6
 ```
---------------------------------------------------------------------------------
+
+<!--
 
 Den Ausdruck in Beispiel `c` und `d` nennt man anonyme Funktion oder
 Lambdafunktion, der Backslash wurde aus visueller Analogie gewählt - `\ ` schaut
 fast aus wie `λ` und dieses Lambda ist genau jenes, das Alonzo Church in seinem
 **lambda calculus** geprägt hat.
-
+-->
 
 Haskell ist "lazy"
 ==================
@@ -350,5 +319,9 @@ Sonstige Tools
  - Hayoo - noch eine Suchmaschine, die noch mehr Pakete durchsucht
  - [www.stackoverflow.com](http://stackoverflow.com/questions/tagged/haskell)
 
+NEXT: Use Markdown for Website, Presentations and Books
+=======================================================
+
 
 [1]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+
