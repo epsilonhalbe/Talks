@@ -1,7 +1,7 @@
 %Ein bisschen wie LEGO<sup>®</sup>
 %Martin Heuschober;
- [CC-BY-NC-SA 4.0][1]
-%9. Mai 2014
+ [CC-BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/)
+%10. Mai 2014
 
 <link rel="stylesheet" href="highlight.js/styles/solarized_light.css">
  <link rel="stylesheet" href="reveal.js/css/reveal.css"/>
@@ -16,6 +16,8 @@ Martin Heuschober
 
  - gelernter Mathematiker
  - Organisator der [Lambdaheads](https://metalab.at/wiki/Lambdaheads)
+    + Mittwoch, 14.5.2014, 19:30 -22:00
+    + Inst. f. Mathe (Oskar Morgenstern Platz 1) Raum 1.141 (1.Stock)
  - Haskell im Selbststudium
  - github: [epsilonhalbe](http://github.com/epsilonhalbe)
  - [slides](http://github.com/epsilonhalbe/Talks/) LikeLegos
@@ -24,27 +26,15 @@ Martin Heuschober
 Intro
 =====
 
-Organisatorisches
------------------
-<!--
-Wenn Fragen auftauchen, bitte unterbrechen und gleich Fragen stellen! Wenn ich
-am Ende des Vortrags irgendwas von Folie 3 erklären muss dann ist wahrscheinlich
-alles nach Folie 3 unklar. Deshalb gleich unterbrechen!
--->
-Bei Fragen bitte einfach unterbrechen!
-
-
 Warum Haskell wie Lego?
 -----------------------
-<!--
+
 Beim Vorbereiten meines Vortrags habe ich überlegt wie ich Leuten so etwas
 abstraktes wie Haskell erkläre, ohne dass ich Programmierkenntnisse voraussetze.
 Dabei ist mir beim Thema "Immutability" eine Stelle aus "Sophies Welt"
 eingefallen, in der das griechische Atommodell mit Lego verglichen wurde.
 Ausgehend von dieser Idee sind mir immer mehr Parallelen zwischen diesen beiden
 Dingen eingefallen und ihr müsst euch den Blödsinn jetzt anhören.
--->
-
 
 Schlagwörter
 ------------
@@ -177,7 +167,12 @@ verwenden.
 WTF ist Funktional in LEGO
 --------------------------
 
-Baupläne!
+Baupläne! Baupläne sind genauso wie Haskell-Funktionen, immer gleich. Soll
+heißen wenn ich einen Bauplan zwei mal hintereinander ausführe kommt das geiche
+Modell heraus bzw. bei Haskell der gleiche Wert.
+
+Weiters werden in Baupläne kleine Teilbaupläne verwendet - auch in
+Haskell-Funktionen werden kleinere Funktionen als "Bausteine" verwendet.
 
 Beispiele
 ---------
@@ -196,14 +191,6 @@ Prelude> let d = \x y -> x*y
 Prelude> d 2 3
 6
 ```
-
-<!--
-
-Den Ausdruck in Beispiel `c` und `d` nennt man anonyme Funktion oder
-Lambdafunktion, der Backslash wurde aus visueller Analogie gewählt - `\ ` schaut
-fast aus wie `λ` und dieses Lambda ist genau jenes, das Alonzo Church in seinem
-**lambda calculus** geprägt hat.
--->
 
 Haskell ist "lazy"
 ==================
@@ -254,24 +241,24 @@ $> ghci LikeLegos.hs
 
 
 ```haskell
-let legos = repeat (Lego (1×4))
+let lego = Lego (1×4)
 let colors = [Black .. White]
-zipWith ($) legos colors
-pprint $ zipWith ($) legos colors
-pprint $ zipWith ($) legos (colors ++ tail colors)
-pprint $ zipWith ($) legos (colors ++ (reverse $ tail colors))
-pprint $ zipWith ($) legos (colors ++ tail (reverse colors))
+map lego colors
+pprint $ map lego colors
+pprint $ map lego (colors ++ colors)
+pprint $ map lego (colors ++ reverse colors)
+pprint $ map lego (colors ++ tail (reverse colors))
+let legos = map lego (colors ++ tail (reverse colors))
 ```
 
 --------------------------------------------------------------------------------
 
 ```haskell
-let legos' = zipWith ($) legos (colors ++ tail (reverse colors))
 pprint $ map (setX 2) $ legos'
 pprint $ map (setColor Red . setX 2) legos'
-pprint $ zipWith ($) (map setY [1..]) (map (setColor Red) legos')
-pprint $ zipWith ($) (map setY ([1..8]++[7,6..1])) legos'
-pprint $ zipWith ($) (map (setY . (9-)) ([1..8]++[7,6..1])) legos'
+pprint $ zipWith setY [1..] (map (setColor Red) legos')
+pprint $ zipWith setY ([1..8]++[7,6..1]) legos'
+pprint $ zipWith setY (map (\x -> 9-x) ([1..8]++[7,6..1])) legos'
 ```
 
 Was brauche ich zum herumspielen?
@@ -314,14 +301,8 @@ Sonstige Tools
 --------------
 
  - HLint - ein ausgezeichnetes Tool das Codestyle verbessert
+ - [Hackage](http://hackage.haskell.org/) - das zentrale Code-Repository
  - Cabal - der Paketmanager von Haskell
  - Hoogle - eine Suchmaschine die es ermöglicht nach Funktionen zu suchen
  - Hayoo - noch eine Suchmaschine, die noch mehr Pakete durchsucht
  - [www.stackoverflow.com](http://stackoverflow.com/questions/tagged/haskell)
-
-NEXT: Use Markdown for Website, Presentations and Books
-=======================================================
-
-
-[1]: http://creativecommons.org/licenses/by-nc-sa/4.0/
-

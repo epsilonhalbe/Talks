@@ -81,10 +81,10 @@ body {
 	line-height: 1;
 }
 
-.reveal h1 { font-size: 2.11em; }
-.reveal h2 { font-size: 1.55em;	}
-.reveal h3 { font-size: 1em;   	}
-.reveal h4 { font-size: .55em;	}
+.reveal h1 { font-size: 2.11em; text-align: center; margin-bottom: 15px;}
+.reveal h2 { font-size: 1.55em;	text-align: center; margin-bottom: 15px;}
+.reveal h3 { font-size: 1em;   	text-align: center; margin-bottom: 15px;}
+.reveal h4 { font-size: .55em;	text-align: center; margin-bottom: 15px;}
 
 
 /*********************************************
@@ -534,7 +534,7 @@ body {
 
 	overflow: visible;
 	z-index: 1;
-	text-align: center;
+	text-align: justify;
 
 	-webkit-transition: -webkit-perspective .4s ease;
 	   -moz-transition: -moz-perspective .4s ease;
