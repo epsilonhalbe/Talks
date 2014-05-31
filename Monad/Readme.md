@@ -211,19 +211,33 @@ Modelling multivalue functions
 ------------------------------
 
 Staying with Piponi we analyze complex roots of complex values, you might
-remember that the equation $x^2 = a$ has exactly two solutions for all $a\neq 0$
-so
+remember that the equation $x^2 = a$ has exactly two solutions for all $a\neq 0$.
+For example the equation
 $$
- x^2 = 4 \Longrightarrow \begin{cases} x = +2\\x = -2\end{cases}
+ x^2 = 4
 $$
-so we could define a function
+admits both $x = +2$ and $x = -2$ as solutions. For complex numbers this gets a
+bit more complicated but mathematicians have solved this problem long time ago
+and now we can defne the `root`-functions in haskell as follows.
+
 ```haskell
-root :: Complex Double -> Int -> [Complex Double]
-root x n = let (r,φ) = polar x
-              i = (0:+1)
-              π = pi
-           in [r^(1/n) * cis ((φ+ 2*k*π)/n)| k <- [0..(n-1)] ]
+root :: Int -> Complex Double -> [Complex Double]
+root n x = let (r,φ) = polar x
+               rep = recip $ fromIntegral n
+           in [(r**rep:+0) * cis (φ*rep+(2*fromIntegral k*pi*rep))| k <- [0..(n-1)]]
 ```
+
+Let us look at two special cases: `sqt = root 2` and `cbt = root 3`, if we now
+want to compute the 6th root by composing the above functions, we have but one
+problem - the types don't match. Of course we could do something like `map` but
+still the resulting type is `[[Complex Double]]`.
+
+What's the right solution
+-------------------------
+
+We need a function of type `[Complex Double] -> (Complex Double -> [Complex Double]) -> [Complex Double]`
+to 
+
 
 
 Abstract Monads
