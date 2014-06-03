@@ -158,11 +158,54 @@ lift f • return = lift f
 <p>Another use-case for monads are functions that have more than one reasonable choice for results - Dan Piponi uses complex square roots as an example, but other examples could be a function that chooses which ice-cream flavour you want to have on your ice-cone. Everyone knows vanilla and chocolate go well with another, but chocolate and lemon is rarely a good coice. Another example would be musical chords - not all notes make a harmonic sound. And a last example I see is all possible moves in a game of chess or go.</p>
 </section><section id="modelling-multivalue-functions" class="slide level2">
 <h1>Modelling multivalue functions</h1>
-<p>Staying with Piponi we analyze complex roots of complex values, you might remember that the equation <span class="math">\(x^2 = a\)</span> has exactly two solutions for all <span class="math">\(a\neq 0\)</span> so <span class="math">\[
- x^2 = 4 \Longrightarrow \begin{cases} x = +2\\x = -2\end{cases}
-\]</span> so we could define a function</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">sqrt<span class="ot"> ::</span> <span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> [<span class="dt">Complex</span> <span class="dt">Double</span>]
-sqrt x <span class="fu">=</span> </code></pre>
+<p>Staying with Piponi we analyze complex roots of complex values, you might remember that the equation <span class="math">\(x^2 = a\)</span> has exactly two solutions for all <span class="math">\(a\neq 0\)</span>. For example the equation <span class="math">\[
+ x^2 = 4
+\]</span> admits both <span class="math">\(x = +2\)</span> and <span class="math">\(x = -2\)</span> as solutions. For complex numbers this gets a bit more complicated but mathematicians have solved this problem long time ago and now we can defne the <code>root</code>-functions in haskell as follows.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">root ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> [<span class="dt">Complex</span> <span class="dt">Double</span>]
+root n x <span class="fu">=</span> <span class="kw">let</span> (r,φ) <span class="fu">=</span> polar x
+               rep <span class="fu">=</span> recip <span class="fu">$</span> fromIntegral n
+           <span class="kw">in</span> [(r<span class="fu">**</span>rep<span class="fu">:+</span><span class="dv">0</span>) <span class="fu">*</span> cis (φ<span class="fu">*</span>rep<span class="fu">+</span>(<span class="dv">2</span><span class="fu">*</span>fromIntegral k<span class="fu">*</span>pi<span class="fu">*</span>rep))<span class="fu">|</span> k <span class="ot">&lt;-</span> [<span class="dv">0</span><span class="fu">..</span>(n<span class="fu">-</span><span class="dv">1</span>)]]</code></pre>
+<p>Let us look at two special cases: <code>sqt = root 2</code> and <code>cbt = root 3</code>, if we now want to compute the 6th root by composing the above functions, we have but one problem - the types don't match. Of course we could do something like <code>map</code> but still the resulting type is <code>[[Complex Double]]</code>.</p>
+</section><section id="whats-the-right-solution" class="slide level2">
+<h1>What's the right solution</h1>
+<p>We need a function of type <code>[Complex Double] -&gt; (Complex Double -&gt; [Complex Double]) -&gt; [Complex Double]</code> to tie the result of a computation with <code>sqt</code> or <code>cbt</code>.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">cplx <span class="fu">&gt;&gt;=</span> nroot <span class="fu">=</span> concatMap nroot cplx</code></pre>
+<p>And if we want a plain old <code>Complex Double</code>s to work with <code>(&gt;&gt;=)</code> we need to pack'em in brackets so <code>return</code>/<code>unit</code>/<code>pure</code> is defined as:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">pure z <span class="fu">=</span> [z]</code></pre>
+<p>that was easy, wasn't it? The last pieces <code>(•)</code> and <code>lift</code>, should be easy as well</p>
+</section><section id="and" class="slide level2">
+<h1>And …</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">lift ::</span> (<span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span> <span class="dt">Double</span>) <span class="ot">-&gt;</span> <span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> [<span class="dt">Complex</span> <span class="dt">Double</span>]
+lift f x <span class="fu">=</span> [f x]
+
+(•)<span class="ot"> ::</span> (<span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> [<span class="dt">Complex</span> <span class="dt">Double</span>]) <span class="ot">-&gt;</span> (<span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> [<span class="dt">Complex</span> <span class="dt">Double</span>]) <span class="ot">-&gt;</span> (<span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> [<span class="dt">Complex</span> <span class="dt">Double</span>])
+(g • f) x <span class="fu">=</span> f x <span class="fu">&gt;&gt;=</span> g</code></pre>
+</section></section>
+<section><section id="random-numbers-with-their-generators" class="titleslide slide level1"><h1>Random Numbers with their generators</h1></section><section id="can-also-be-modeled-with-the-help-of-monads" class="slide level2">
+<h1>Can also be modeled with the help of monads</h1>
+<p>So what do mean when we speak of random &quot;numbers&quot;? In haskell we mean functions of the following type:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">random ::</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (a, <span class="dt">StdGen</span>)</code></pre>
+<p>we could hide this in a <code>data</code>-declaration</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Randomized</span> a <span class="fu">=</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (a, <span class="dt">StdGen</span>)</code></pre>
+<p>Which means given a Standard Random &quot;Number&quot; Generator we get both a random value <strong>and</strong> a new Generator, you can think of the Generator as a seed.</p>
+<p>So if we want some random in functions <code>f :: a -&gt; b</code>, <code>g: b -&gt; c</code>, we can view it as a more complex function</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f̃<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>)
+g̃<span class="ot"> ::</span> b <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (c,<span class="dt">StdGen</span>)</code></pre>
+<p>with <code>Randomized</code> this would look much nicer</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f̃<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">Randomized</span> b
+g̃<span class="ot"> ::</span> b <span class="ot">-&gt;</span> <span class="dt">Randomized</span> c</code></pre>
+<p>But how the f*** does one combine those</p>
+</section><section id="bind-to-the-rescue" class="slide level2">
+<h1>Bind to the rescue</h1>
+<p>We start small and find out how to cram a <code>gen -&gt; (value, gen)</code> into such a <code>f̃</code></p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">(&gt;&gt;=) ::</span> (a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>)) <span class="ot">-&gt;</span>(<span class="dt">StdGen</span> <span class="ot">-&gt;</span> (a, <span class="dt">StdGen</span>)) <span class="ot">-&gt;</span> (<span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>))</code></pre>
+<div class="fragment">
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">(&gt;&gt;=) ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Randomized</span> b) <span class="ot">-&gt;</span> <span class="dt">Randomized</span> a <span class="ot">-&gt;</span> <span class="dt">Randomized</span> b</code></pre>
+</div>
+<div class="fragment">
+<pre class="sourceCode haskell"><code class="sourceCode haskell">(f̃ <span class="fu">&gt;&gt;=</span> rx) seed <span class="fu">=</span> <span class="kw">let</span> (x,seed&#39;) <span class="fu">=</span> rx seed
+                  <span class="kw">in</span> f̃ x seed&#39;</code></pre>
+</div>
 </section></section>
 <section><section id="abstract-monads" class="titleslide slide level1"><h1>Abstract Monads</h1></section><section id="intro-2" class="slide level2">
 <h1>Intro</h1>

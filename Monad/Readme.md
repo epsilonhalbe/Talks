@@ -121,9 +121,7 @@ And indeed:
 ```haskell
 (x,msg) >>= f' = let (fx,fmsg) = f' x
 ```
-
 . . .
-
 ```haskell
                  in (fx, msg++"\n"++fmsg)
 ```
@@ -293,7 +291,12 @@ f̃ :: a -> StdGen -> (b,StdGen)
 g̃ :: b -> StdGen -> (c,StdGen)
 ```
 
-with `Randomized` this would look much nicer 
+with `Randomized` this would look much nicer
+
+```haskell
+f̃ :: a -> Randomized b
+g̃ :: b -> Randomized c
+```
 
 But how the f\*\*\* does one combine those
 
@@ -304,11 +307,41 @@ We start small and find out how to cram a `gen -> (value, gen)` into such a `f̃
 
 ```haskell
 (>>=) :: (a -> StdGen -> (b,StdGen)) ->(StdGen -> (a, StdGen)) -> (StdGen -> (b,StdGen))
+```
+. . .
+```haskell
+(>>=) :: (a -> Randomized b) -> Randomized a -> Randomized b
+```
+. . .
+```haskell
 (f̃ >>= rx) seed = let (x,seed') = rx seed
                   in f̃ x seed'
 ```
 
+and what about `return`/`unit`/`pure` we know it should have the type
 
+```haskell
+return :: a -> StdGen -> (a,StdGen)
+```
+. . .
+```haskell
+return ra seed = (ra, seed)
+```
+
+a bit more interesting
+----------------------
+
+are `(•)` and `lift`
+
+```haskell
+lift :: (a -> b) -> (a -> StdGen -> (b,StdGen))
+(lift f) x seed = (f x, seed)
+```
+
+```haskell
+(•) :: (b -> StdGen -> (c,StdGen)) -> (a -> StdGen -> (b,StdGen)) -> (a -> StdGen -> (c,StdGen))
+(g̃ • f̃) x seed = (f̃ x >>= g̃) seed
+```
 
 
 Abstract Monads
