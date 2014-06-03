@@ -236,7 +236,78 @@ What's the right solution
 -------------------------
 
 We need a function of type `[Complex Double] -> (Complex Double -> [Complex Double]) -> [Complex Double]`
-to 
+to tie the result of a computation with `sqt` or `cbt`.
+
+```haskell
+cplx >>= nroot = concatMap nroot cplx
+```
+
+And if we want a plain old `Complex Double`s to work with `(>>=)` we need to pack'em in
+brackets so `return`/`unit`/`pure` is defined as:
+
+```haskell
+pure z = [z]
+```
+
+that was easy, wasn't it? The last pieces `(•)` and `lift`, should be easy as
+well
+
+And …
+-----
+
+```haskell
+lift :: (Complex Double -> Complex Double) -> Complex Double -> [Complex Double]
+lift f x = [f x]
+
+(•) :: (Complex Double -> [Complex Double]) -> (Complex Double -> [Complex Double]) -> (Complex Double -> [Complex Double])
+(g • f) x = f x >>= g
+```
+
+Random Numbers with their generators
+====================================
+
+Can also be modeled with the help of monads
+-------------------------------------------
+
+So what do mean when we speak of random "numbers"?
+In haskell we mean functions of the following type:
+
+```haskell
+random :: StdGen -> (a, StdGen)
+```
+
+we could hide this in a `data`-declaration
+
+```haskell
+data Randomized a = StdGen -> (a, StdGen)
+```
+
+Which means given a Standard Random "Number" Generator we get both a random
+value **and** a new Generator, you can think of the Generator as a seed.
+
+So if we want some random in functions `f :: a -> b`, `g: b -> c`, we can
+view it as a more complex function
+
+```haskell
+f̃ :: a -> StdGen -> (b,StdGen)
+g̃ :: b -> StdGen -> (c,StdGen)
+```
+
+with `Randomized` this would look much nicer 
+
+But how the f\*\*\* does one combine those
+
+Bind to the rescue
+------------------
+
+We start small and find out how to cram a `gen -> (value, gen)` into such a `f̃`
+
+```haskell
+(>>=) :: (a -> StdGen -> (b,StdGen)) ->(StdGen -> (a, StdGen)) -> (StdGen -> (b,StdGen))
+(f̃ >>= rx) seed = let (x,seed') = rx seed
+                  in f̃ x seed'
+```
+
 
 
 
