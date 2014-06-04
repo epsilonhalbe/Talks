@@ -5,12 +5,31 @@
   <meta name="generator" content="pandoc">
   <meta name="author" content="Martin Heuschober" />
   <meta name="author" content="CC-BY-NC-SA 4.0" />
-  <title>Cryptol 🔑 A DSL for cry</title>
+  <title>Cryptol 🔑 A DSL for cryptography</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="reveal.js/css/reveal.min.css"/>
     <style type="text/css">code{white-space: pre;}</style>
+    <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+    </style>
     <link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
     <!-- If the query includes 'print-pdf', include the PDF print sheet -->
     <script>
@@ -31,7 +50,7 @@
     <div class="slides">
 
 <section>
-    <h1 class="title">Cryptol 🔑 A DSL for cry</h1>
+    <h1 class="title">Cryptol 🔑 A DSL for cryptography</h1>
     <h2 class="author">Martin Heuschober</h2>
     <h2 class="author"><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC-BY-NC-SA 4.0</a></h2>
     <h3 class="date">11. June 2014</h3>
@@ -47,8 +66,71 @@
 <section><section id="cryptol" class="titleslide slide level1"><h1>Cryptol</h1></section><section id="facts-features" class="slide level2">
 <h1>Facts &amp; Features</h1>
 <ul>
+<li>Written by Galois Inc.</li>
+<li>Written in Haskell /</li>
+<li>Uncommon syntax</li>
+<li>Strongly typed</li>
 <li>High Level</li>
+<li>Abstract</li>
+<li>Lazy</li>
+<li>Polymorphic</li>
+<li>Functional</li>
 </ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Included SAT-solver</li>
+<li>Included SMT-solver</li>
+<li>Interpreter</li>
+<li>NOT good for production</li>
+<li>BUT good for prototypes</li>
+<li>good for learning</li>
+<li>Open Source</li>
+<li>~150 pages book/documentation . . .</li>
+<li>Approved by the NSA</li>
+</ul>
+</section></section>
+<section><section id="syntax" class="titleslide slide level1"><h1>Syntax</h1></section><section id="uncommon-doesnt-even-grasp-it" class="slide level2">
+<h1>Uncommon doesn't even grasp it</h1>
+<ol type="1">
+<li>Everything has a type</li>
+<li><p>Every number has a bit-size</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"> <span class="dv">12</span> <span class="fu">:</span> [<span class="dv">8</span>]</code></pre>
+<p>this number <code>12</code> is represented as 8-bit number.</p></li>
+</ol>
+</section><section id="there-are-bitsbooleans" class="slide level2">
+<h1>There are Bits/Booleans</h1>
+<ul>
+<li>True</li>
+<li>False</li>
+</ul>
+<p>With the operations</p>
+<ul>
+<li><code>&amp;&amp;</code>, <code>||</code>, if … then … else, ^ (xor), ~(complement)</li>
+</ul>
+</section><section id="numberswordscharacters" class="slide level2">
+<h1>Numbers/Words/Characters</h1>
+<p>Cryptol supports only <strong>nonnegative integers</strong> with no upper bound</p>
+<ul>
+<li>default base 16 (reset with <code>:set base=n</code> for 0≤n≤36)</li>
+<li>write with prefixes <code>0b…</code>, <code>0o…</code>, <code>0x…</code> or <code>0&lt;base&gt;…</code></li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="dv">0</span><span class="fu">&lt;</span><span class="dv">36</span><span class="fu">&gt;</span>cryptol
+<span class="fu">&gt;</span> 0b1010101</code></pre>
+<p>But usually one writes characters like 'a','b' and <code>z</code></p>
+</section><section id="tupels" class="slide level2">
+<h1>Tupels</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> (<span class="ch">&#39;a&#39;</span>,<span class="dv">1</span><span class="fu">+</span><span class="dv">3</span>)
+<span class="fu">&gt;</span> (<span class="ch">&#39;a&#39;</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>)</code></pre>
+<p>And there are accessors, called projections, written <code>(1,'c').2</code>, which work polymorphic for all tuples. But you can also use pattern matching like <code>(one, _ ) = (1, &quot;useless&quot;)</code>, where <code>_</code> is the discard variable.</p>
+</section><section id="sequences" class="slide level2">
+<h1>Sequences</h1>
+<p>Lists in Cryptol are the main workhorse syntax is as usual <code>[1]</code> or <code>[1..10]</code> or <code>[1,3..100]</code> or <code>[100,97..1]</code>. Like any other modern language it has list comprehensions <code>[x*y| x &lt;- [1..10], y &lt;- [11,12]]</code> but we also have parallel comprehensions, which work like a zip.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">[(i,j)<span class="fu">|</span> i <span class="ot">&lt;-</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]
+      <span class="fu">|</span> j <span class="ot">&lt;-</span> [<span class="dv">10</span>,<span class="dv">9</span><span class="fu">..</span><span class="dv">1</span>]] <span class="fu">=</span> [(<span class="dv">1</span>,<span class="dv">10</span>),(<span class="dv">2</span>,<span class="dv">9</span>),(<span class="dv">3</span>,<span class="dv">8</span>),…,(<span class="dv">10</span>,<span class="dv">1</span>)]</code></pre>
+</section><section id="operations-on-lists" class="slide level2">
+<h1>Operations on lists</h1>
+<p>We have operators <code>#</code>, <code>@</code>, <code>@@</code>, <code>!</code> and <code>!!</code>; <code>&gt;&gt;</code>, <code>&gt;&gt;&gt;</code>, <code>&lt;&lt;</code>, <code>&lt;&lt;&lt;</code></p>
 </section></section>
     </div>
   </div>
