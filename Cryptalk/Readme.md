@@ -58,7 +58,7 @@ There are Bits/Booleans
 
 With the operations
 
-- `&&`, `||`, if … then … else, ^ (xor), ~(complement)
+- `&&`, `||`, `if _ then _ else`, `^` (xor), `~`(complement)
 
 Numbers/Words/Characters
 ------------------------
@@ -66,7 +66,7 @@ Numbers/Words/Characters
 Cryptol supports only **nonnegative integers** with no upper bound
 
 - default base 16 (reset with `:set base=n` for 0≤n≤36)
-- write with prefixes `0b…`, `0o…`, `0x…` or `0<base>…`
+- write with prefixes `0b_`, `0o_`, `0x_` or `0<base>_`
 
 ```haskell
 > 0<36>cryptol
@@ -83,9 +83,9 @@ Tupels
 > ('a',1,2,3,4)
 ```
 
-And there are accessors, called projections, written `(1,'c').2`, which work polymorphic for all
-tuples. But you can also use pattern matching like `(one, _ ) = (1, "useless")`,
-where `_` is the discard variable.
+And there are accessors, called projections, written `(1,'c').2`, which work
+polymorphic for all tuples. But you can also use pattern matching like
+`(one, _ ) = (1, "useless")`, where `_` is the discard variable.
 
 Sequences
 ---------
@@ -97,11 +97,46 @@ comprehensions, which work like a zip.
 
 ```haskell
 [(i,j)| i <- [1..10]
-      | j <- [10,9..1]] = [(1,10),(2,9),(3,8),…,(10,1)]
+      | j <- [10,9..1]] = [(1,10),(2,9),(3,8),..,(10,1)]
 ```
+
+Lists have types too
+--------------------
+
+```haskell
+[1..10] : [10][64]
+```
+I am not too happy with that syntax but it means [1..10] is alist of lenght 10
+with each element being a 64-bit integer. But this allows for really cool type
+level trickery and advanced awsomeness like doing algebra on type level.
 
 Operations on lists
 -------------------
 
-We have operators `#`, `@`, `@@`, `!` and `!!`; `>>`, `>>>`, `<<`, `<<<`
+We have operators
+
+- `#` = append
+- `@` = index
+- `@@`= slice
+- `!` = reverse index
+- `!!`= reverse slice
+- `>>` = shift right
+- `>>>`= rotate right
+- `<<` = shift left
+- `<<<`= rotate left
+
+other list functions
+--------------------
+
+```haskell
+take`{3} [1 .. 12]
+drop`{3} [1 .. 12]
+split`{3} [1 .. 12]
+groupBy`{3} [1 .. 12]
+join [[1 .. 4], [5 .. 8], [9 .. 12]]
+join [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
+transpose [[1, 2, 3, 4], [5, 6, 7, 8]]
+transpose [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+```
+
 
