@@ -2,12 +2,12 @@
 % Martin Heuschober;
   [CC-BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 % 11. June 2014
-
+<!--
 <link rel="stylesheet" href="highlight.js/styles/solarized_light.css">
 <link rel="stylesheet" href="reveal.js/css/reveal.css"/>
 <script src="highlight.js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
+-->
 Cryptol
 =======
 
@@ -49,6 +49,12 @@ Uncommon doesn't even grasp it
  12 : [8]
 ```
 this number `12` is represented as 8-bit number.
+
+You can find out about the type of something by
+
+```haskell
+:t 12
+```
 
 There are Bits/Booleans
 -----------------------
@@ -100,6 +106,9 @@ comprehensions, which work like a zip.
       | j <- [10,9..1]] = [(1,10),(2,9),(3,8),..,(10,1)]
 ```
 
+On Types and Functions
+======================
+
 Lists have types too
 --------------------
 
@@ -129,14 +138,106 @@ other list functions
 --------------------
 
 ```haskell
-take`{3} [1 .. 12]
-drop`{3} [1 .. 12]
-split`{3} [1 .. 12]
-groupBy`{3} [1 .. 12]
 join [[1 .. 4], [5 .. 8], [9 .. 12]]
 join [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
 transpose [[1, 2, 3, 4], [5, 6, 7, 8]]
 transpose [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 ```
 
+Functions and polymorphism
+--------------------------
 
+One central piece of functional programming are of course functions, but one
+cannot speak of those without mentioning polymorphism.
+
+```haskell
+> tail [1..10]
+[2,3,4,5,6,7,8,9,10]
+```
+But what type signature has `tail`?
+
+```haskell
+>:t tail
+tail : {a, n} => [n+1]a -> [n]a
+```
+i.e. tail takes a list of `(n+1)`-elements of type `a` and spits out a list of
+`n`-elements of the same type. Note that `n` does not necessarily need to be finite!
+
+Functions continued
+-------------------
+
+But there are functions that have a bit more interesting types
+
+```haskell
+>:t split [1..12]
+split [0..15] : {β,cols,rows} (β >= 4, fin β, fin rows, 16 == cols * row)
+                                                              => [cols][rows][β]
+```
+
+Let us note that this type signature needs a teensy tiny bit explanation
+
+- `β` denotes the bit-size; and the interpreter derived correctly that the
+largest number in this list (`12`) needs at least 4 bits for representation.
+- another thing that the interpreter derived that the length of the list has to
+  be the product of the rows and columns you split the list into.
+
+But one grand thing is that cryptol provides syntax to pull type information
+down to the function call level with *'backtick'* syntax:
+
+```haskell
+> split`{8} [0..15]
+[[0,1],[2,3]..[14,15]]
+```
+
+Other notable functions used with that syntax are `take`, `drop` and `groupBy`.
+
+Numbers again
+-------------
+
+Numbers in cryptol are in reality just nicely printed bit-sequences, therefore
+you can use all the list functions for numbers as well!
+
+and then to characters and strings
+----------------------------------
+
+```haskell
+> :set base=10
+> :set ascii=off
+> 'A'
+65
+> "ABC"
+[65,66,67]
+> 'C' - 'A'
+2
+```
+
+Zero/Null/Nada
+--------------
+
+`zero` is a polymorphic 'value' and represents the number zero in whatever
+setting you like. Which is espcially useful with the complement function `~`.
+
+Sweeet as sugar - a.k.a - moar syntax
+=====================================
+
+Streams
+-------
+
+Often in crypto one encounters stream ciphers which are depicted
+<!--![picture](/path/to/picture.jpeg "optional title")-->
+and can be written in cryptol as follows
+
+```haskell
+as = [0x3F, 0xE2, 0x65, 0xCA] # new
+   where [a ^ b ^ c | a <-          as
+                    | b <- drop`{1} as
+                    | c <- drop`{3} as]
+```
+
+Polynomials
+-----------
+
+For the AES algorithm one of the basic building blocks is polynomials with
+coefficients in $\mathbb F_2$, i.e. $\{1,2\}$.
+
+m a -> (a -> m b) ->  m b
