@@ -1,1 +1,1 @@
-../reveal.js
+../javascript/reveal.js

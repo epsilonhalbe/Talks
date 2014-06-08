@@ -258,7 +258,7 @@ body {
 	display: inline-block;
 
 	text-align: left;
-	margin: 0 0 0 1em;
+	margin: 0 0 0 2em;
 }
 
 .reveal ol {
@@ -282,7 +282,7 @@ body {
 .reveal ol ol,
 .reveal ol ul {
 	display: block;
-	margin-left: 40px;
+	margin-left: 0px;
 }
 
 .reveal p {
@@ -318,8 +318,8 @@ body {
 .reveal pre {
 	display: block;
 	position: relative;
-	width: 115%;
-	margin: 15px auto;
+	width: 100%;
+	margin: 15px 0;
 
 	text-align: left;
 	font-size: 0.90em;
@@ -333,13 +333,14 @@ body {
 .reveal code {
 	font-size: 0.90em;
 	font-family: monospace;
-    color: black;
+	text-shadow: 1px 1px #222222;
 }
 .reveal pre code {
 	padding: 5px;
 	overflow: auto;
 	max-height: 500px;
 	word-wrap: normal;
+	text-shadow: none;
 }
 .reveal pre.stretch code {
 	height: 100%;
@@ -354,6 +355,7 @@ body {
 .reveal table td {
 	text-align: left;
 	padding-right: .3em;
+	padding-left: 4em;
 }
 
 .reveal table th {
@@ -530,7 +532,7 @@ body {
 	width: 100%;
 	height: 100%;
 	left: 50%;
-	top: 50%;
+	top: 40%;
 
 	overflow: visible;
 	z-index: 1;

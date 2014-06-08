@@ -1,1 +1,1 @@
-../highlight.js
+../javascript/highlight.js

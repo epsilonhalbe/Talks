@@ -80,4 +80,4 @@ setY ::  Int -> Lego -> Lego
 setY n (Lego (Dim α _) c)= Lego (Dim α n) c
 
 setColor :: Color -> Lego -> Lego
-setColor c (Lego (Dim α β) _)= Lego (Dim α β) c
+setColor c (Lego d _)= Lego d c
