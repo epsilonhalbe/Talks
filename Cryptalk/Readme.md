@@ -253,12 +253,29 @@ as = [0x3F, 0xE2, 0x65, 0xCA] # new
 Polynomials
 -----------
 
-For the AES algorithm one of the basic building blocks are polynomials with
-coefficients in $\mathbb F_2$, i.e. $\{0,1\}$. So we can write the term
-$x^7+x^4+x+1$
+For the AES algorithm one of the basic building blocks galois fields, which are
+just polynomials with coefficients in $\mathbb F_2$, i.e. $\{0,1\}$. So we can
+write the term $x^7+x^4+x+1$
 
 ~~~haskell
 > <|x^^7+x^^4+x+1|>
+Assuming a = 8
+147
+> <|x^^2 +x +1|>
+Assuming a = 3
+7
+~~~~
+
+--------------------------------------------------------------------------------
+
+As these polynomials are equivalent to numbers written in binary we get the
+result of `147`. Cryptol also provides polynomial multiplication, which I do not
+yet understand fully understand (maybe I'll provide some explanation when I do).
+
+~~~haskell
+> <|x^^7+x^^4+x+1|> ^ <| x^^2 +x +1|>
+Assuming a = 8
+148
 ~~~
 
 Tests, Satisfiability and Provability
@@ -300,7 +317,7 @@ You can invoke proofs with
 > :prove (\x y -> (x^^2-y^^2)== ((x:[8])-y)*(x+(y:[8])))
 ~~~
 
---------------------------------------------------------------------------------i
+--------------------------------------------------------------------------------
 
 Cryptol itself does not provide a satisfiability solver but it uses the open
 source tool
@@ -335,6 +352,5 @@ We see that there are a lot more solutions than the expected `3` and
 solution in a given setting (here 8-bit integers) maybe just because the
 computing resources are not sufficient or maybe the general answer might
 not be true - so be careful and think about the answers given.
-
 
 
