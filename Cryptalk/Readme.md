@@ -11,6 +11,11 @@
 Cryptol
 =======
 
+Disclaimer
+----------
+
+A lot of the examples and content was taken from the book one can get at [cryptol.net](http://www.cryptol.net/documentation.html).
+
 Facts & Features
 ----------------
 
@@ -44,13 +49,13 @@ Uncommon doesn't even grasp it
 ------------------------------
 
 1. Everything has a type
-2. Every number has a bit-size
+2. Every number has a bit size
 
 ~~~haskell
  12 : [8]
 ~~~
 
-this number `12` is represented as 8-bit number.<br>
+This number `12` is represented as 8-bit number.<br>
 You can find out about the type of something by
 
 ~~~haskell
@@ -72,7 +77,7 @@ With the operations
 Numbers/Words/Characters
 ------------------------
 
-Cryptol supports only **nonnegative integers** with no upper bound
+Cryptol supports only **non-negative integers** with no upper bound
 
 - default base 16 (reset with `:set base=n` for 0≤n≤36)
 - write with prefixes `0b_`, `0o_`, `0x_` or `0<base>_`
@@ -118,9 +123,9 @@ Lists have types too
 ~~~haskell
 [1..10] : [10][64]
 ~~~
-I am not too happy with that syntax but it means [1..10] is alist of lenght 10
+I am not too happy with that syntax but it means [1..10] is a list of length 10
 with each element being a 64-bit integer. But this allows for really cool type
-level trickery and advanced awsomeness like doing algebra on type level.
+level trickery and advanced awesomeness like doing algebra on type level.
 
 Operations on lists
 -------------------
@@ -137,7 +142,7 @@ We have operators
 - `<<`  = shift left
 - `<<<` = rotate left
 
-other list functions
+Other list functions
 --------------------
 
 ~~~haskell
@@ -179,7 +184,7 @@ split [0..15] : {β,cols,rows} (β >= 4, fin β, fin rows,
 
 Let us note that this type signature needs a teensy tiny bit explanation
 
-- `β` denotes the bit-size; and the interpreter derived correctly that the
+- `β` denotes the bit size; and the interpreter derived correctly that the
 largest number in this list (`12`) needs at least 4 bits for representation.
 - another thing that the interpreter derived that the length of the list has to
   be the product of the rows and columns you split the list into.
@@ -203,7 +208,7 @@ Numbers again
 Numbers in cryptol are in reality just nicely printed bit-sequences, therefore
 you can use all the list functions for numbers as well!
 
-and then to characters and strings
+And then to characters and strings
 ----------------------------------
 
 ~~~haskell
@@ -221,7 +226,7 @@ Zero, Null, Nada
 ----------------
 
 `zero` is a polymorphic 'value' and represents the number zero in whatever
-setting you like. Which is espcially useful with the complement function `~`.
+setting you like. Which is especially useful with the complement function `~`.
 
 Sweeet as sugar - a.k.a - moar syntax
 =====================================
@@ -231,7 +236,7 @@ Streams
 
 Often in crypto one encounters stream ciphers which are depicted
 
-<!--![picture](/path/to/picture.jpeg "optional title")-->
+<!--![picture](/path/to/picture "optional title")-->
 ![Stream Diagram](streamDiagram.jpg "Stream Diagram")
 
 --------------------------------------------------------------------------------
@@ -262,25 +267,74 @@ Tests, Satisfiability and Provability
 Why is this useful
 ==================
 
-A lot of cryptoalgorithms have universal properties, where the most prominent is
-`decode . encode == id`, 
+A lot of cryptographic algorithms have universal properties
+
+- most important equation: `decode . encode == id`
+- hash collisions: `hash x /= hash y || x == y`
+- for the Caesar cipher and related: `length . encode = length`
+- for many hash functions `length . hash = constant`
 
 Tests
-=====
+-----
 
 As cryptol has its origin in the language of haskell it comes bundled with the
 powerful tool 'QuickCheck'. You can invoke this by
 
 ~~~haskell
 > :check (reverse (reverse xx)) == (xx :[10][8])
-Using radom testing.
-passed 100 tests.
+Using random testing.
+Passed 100 tests.
 Coverage: 0.00% (100 of 2^^80 values)
 ~~~
 
 
-CVC4
-----
+Proofs
+------
 
-Cryptol provides not only checking 
+While tests are a good indicator, where your code has gone wrong, proofs are the
+more recommended thing. They are more solid and with cryptography you don't want
+to skimp on the solidity of your programs/algorithms!
+
+You can invoke proofs with
+~~~haskell
+> :prove (\x y -> (x^^2-y^^2)== ((x:[8])-y)*(x+(y:[8])))
+~~~
+
+--------------------------------------------------------------------------------i
+
+Cryptol itself does not provide a satisfiability solver but it uses the open
+source tool
+
+- [CVC4](http://cvc4.cs.nyu.edu/)
+
+Or alternatively
+
+- Microsoft's [Z3](http://z3.codeplex.com/)
+- [Yices](http://yices.csl.sri.com/download-yices2.shtml).
+
+Satisfiability
+--------------
+
+SAT solver is a topic I've never touched before, but it is a quite powerful tool
+to have. Let us see this in an example:
+
+~~~haskell
+file: isSqrt x y = x == y*y
+> :sat \x -> isSqrt x (9:[8]) && ~(elem (x,[3]))
+\x -> isSqrt x (9:[8]) && ~(elem (x,[3])) 125 True
+> :sat \x -> isSqrt x (9:[8]) && ~(elem (x,[3,125]))
+\x -> isSqrt x (9:[8]) && ~(elem (x,[3,125])) 131 True
+> :sat \x -> isSqrt x (9:[8]) && ~(elem (x,[3,125,131]))
+\x -> isSqrt x (9:[8]) && ~(elem (x,[3,125,131])) 253 True
+> :sat \x -> isSqrt x (9:[8]) && ~(elem (x,[3,125,131,253]))
+Unsatisfiable.
+~~~
+
+We see that there are a lot more solutions than the expected `3` and
+`-3 % 256 == 256`. Of course in other situations the SAT solver might not find
+solution in a given setting (here 8-bit integers) maybe just because the
+computing resources are not sufficient or maybe the general answer might
+not be true - so be careful and think about the answers given.
+
+
 

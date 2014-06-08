@@ -1,3 +1,0 @@
-f3 = (+) 3
-
-data Test = Test {x : [8], y : String}
