@@ -59,7 +59,8 @@ This number `12` is represented as 8-bit number.<br>
 You can find out about the type of something by
 
 ~~~haskell
-:t 12
+> :t 12
+12 : {a} (a >= 4, fin a) => [a]
 ~~~
 
 There are Bits/Booleans
@@ -79,12 +80,14 @@ Numbers/Words/Characters
 
 Cryptol supports only **non-negative integers** with no upper bound
 
-- default base 16 (reset with `:set base=n` for 0≤n≤36)
-- write with prefixes `0b_`, `0o_`, `0x_` or `0<base>_`
+- default base 16 (reset with `:set base=n` for $n\in\{2,8,10,16\}$)
+- write with prefixes `0b_`, `0o_`, `0x_`
 
 ~~~haskell
-> 0<36>cryptol
-> 0b1010101
+> 0b1010011
+> 0o123
+> 83
+> 0x53
 ~~~
 
 But usually one writes characters like `'a'`,`'b'` and `'z'`
@@ -106,8 +109,13 @@ Sequences
 
 Lists in Cryptol are the main workhorse syntax is as usual `[1]` or `[1..10]` or
 `[1,3..100]` or `[100,97..1]`. Like any other modern language it has list
-comprehensions `[x*y| x <- [1..10], y <- [11,12]]` but we also have parallel
-comprehensions, which work like a zip.
+comprehensions
+
+~~~haskell
+[x*y| x <- [1..10], y <- [11,12]]
+~~~
+
+But we also have parallel comprehensions, which work like a zip.
 
 ~~~haskell
 [(i,j)| i <- [1..10]
@@ -123,9 +131,10 @@ Lists have types too
 ~~~haskell
 [1..10] : [10][64]
 ~~~
-I am not too happy with that syntax but it means [1..10] is a list of length 10
-with each element being a 64-bit integer. But this allows for really cool type
-level trickery and advanced awesomeness like doing algebra on type level.
+
+I am not too happy with that syntax but it means `[1..10]` is a list of length
+`10` with each element being a `64`-bit integer. But this allows for really cool
+type level trickery and advanced awesomeness like doing algebra on type level.
 
 Operations on lists
 -------------------
@@ -146,10 +155,10 @@ Other list functions
 --------------------
 
 ~~~haskell
-join [[1 .. 4], [5 .. 8], [9 .. 12]]
-join [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
-transpose [[1, 2, 3, 4], [5, 6, 7, 8]]
-transpose [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+> join [[1 .. 4], [5 .. 8], [9 .. 12]]
+> join [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
+> transpose [[1, 2, 3, 4], [5, 6, 7, 8]]
+> transpose [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 ~~~
 
 Functions and polymorphism
@@ -160,12 +169,15 @@ cannot speak of those without mentioning polymorphism.
 
 ~~~haskell
 > tail [1..10]
+Assuming a = 4
 [2,3,4,5,6,7,8,9,10]
 ~~~
+
 But what type signature has `tail`?
+-----------------------------------
 
 ~~~haskell
->:t tail
+> :t tail
 tail : {a, n} => [n+1]a -> [n]a
 ~~~
 i.e. tail takes a list of `(n+1)`-elements of type `a` and spits out a list of
@@ -177,17 +189,28 @@ Functions continued
 But there are functions that have a bit more interesting types
 
 ~~~haskell
->:t split [1..12]
-split [0..15] : {β,cols,rows} (β >= 4, fin β, fin rows,
-    16 == cols * row) => [cols][rows][β]
+> :t split [1..12]
+split [0..15] : {a,cols,rows} (a >= 4, fin a, fin rows,
+    16 == cols * row) => [cols][rows][a]
 ~~~
 
 Let us note that this type signature needs a teensy tiny bit explanation
 
-- `β` denotes the bit size; and the interpreter derived correctly that the
+--------------------------------------------------------------------------------
+
+~~~haskell
+a >= 4, a fin
+~~~
+
+Here `a` denotes the bit size; and the interpreter derived correctly that the
 largest number in this list (`12`) needs at least 4 bits for representation.
-- another thing that the interpreter derived that the length of the list has to
-  be the product of the rows and columns you split the list into.
+
+~~~haskell
+fin rows, 16 == cols * row
+~~~
+
+Another thing that the interpreter derived that the length of the list has to be
+the product of the rows and columns you split the list into.
 
 Backtick Syntax
 ---------------
@@ -197,6 +220,7 @@ down to the function call level with *'backtick'* syntax:
 
 ~~~haskell
 > split`{8} [0..15]
+Assuming a = 4
 [[0,1],[2,3]..[14,15]]
 ~~~
 
@@ -205,7 +229,7 @@ Other notable functions used with that syntax are `take`, `drop` and `groupBy`.
 Numbers again
 -------------
 
-Numbers in cryptol are in reality just nicely printed bit-sequences, therefore
+Numbers in cryptol are in reality just pretty printed bit-sequences, therefore
 you can use all the list functions for numbers as well!
 
 And then to characters and strings
@@ -225,11 +249,11 @@ And then to characters and strings
 Zero, Null, Nada
 ----------------
 
-`zero` is a polymorphic 'value' and represents the number zero in whatever
-setting you like. Which is especially useful with the complement function `~`.
+In cryptol `zero` is a polymorphic 'value' and represents the number zero in any
+setting you like. This is especially useful with the complement operator `~`.
 
-Sweeet as sugar - a.k.a - moar syntax
-=====================================
+More syntactic sugar
+====================
 
 Streams
 -------
@@ -241,19 +265,19 @@ Often in crypto one encounters stream ciphers which are depicted
 
 --------------------------------------------------------------------------------
 
-and can be written in cryptol as follows
+And can be written in cryptol as follows
 
 ~~~haskell
 as = [0x3F, 0xE2, 0x65, 0xCA] # new
-   where [a ^ b ^ c | a <-          as
-                    | b <- drop`{1} as
-                    | c <- drop`{3} as]
+   where new = [a ^ b ^ c | a <-          as
+                          | b <- drop`{1} as
+                          | c <- drop`{3} as]
 ~~~
 
 Polynomials
 -----------
 
-For the AES algorithm one of the basic building blocks galois fields, which are
+For the AES algorithm one of the basic building blocks Galois fields, which are
 just polynomials with coefficients in $\mathbb F_2$, i.e. $\{0,1\}$. So we can
 write the term $x^7+x^4+x+1$
 
@@ -282,7 +306,7 @@ Tests, Satisfiability and Provability
 =====================================
 
 Why is this useful
-==================
+------------------
 
 A lot of cryptographic algorithms have universal properties
 
@@ -298,7 +322,7 @@ As cryptol has its origin in the language of haskell it comes bundled with the
 powerful tool 'QuickCheck'. You can invoke this by
 
 ~~~haskell
-> :check (reverse (reverse xx)) == (xx :[10][8])
+> :check \xx -> reverse (reverse xx) == (xx :[10][8])
 Using random testing.
 Passed 100 tests.
 Coverage: 0.00% (100 of 2^^80 values)
@@ -314,7 +338,7 @@ to skimp on the solidity of your programs/algorithms!
 
 You can invoke proofs with
 ~~~haskell
-> :prove (\x y -> (x^^2-y^^2)== ((x:[8])-y)*(x+(y:[8])))
+> :prove \x y -> (x^^2-y^^2)== ((x:[8])-y)*((y:[8])+x)
 ~~~
 
 --------------------------------------------------------------------------------
@@ -353,4 +377,123 @@ solution in a given setting (here 8-bit integers) maybe just because the
 computing resources are not sufficient or maybe the general answer might
 not be true - so be careful and think about the answers given.
 
+E-mail
+======
 
+
+---
+
+[...]
+
+> # Infix operators
+>
+> Am I right that the backtick syntax prevents you from using the infix
+> syntax for normal functions, as used in haskell?
+
+I'm not positive, but our goal is for Cryptol to be familiar to crypto
+mathematicians, and this syntax, while good for Haskell programmers,
+wouldn't come as naturally to math folks.
+
+--------------------------------------------------------------------------------
+
+> # Pros and Co.
+>
+> What do you consider the nicest features of cryptol?
+>
+> Mine is the type level algebra you can do with list length especially in
+> combination with the backtick syntax!
+
+Absolutely!  Another is the very powerful connection to SMT solvers, making
+:prove and :sat possible. Another is whenever I see a Cryptol program that
+either looks like, or improves upon, the original paper's specification, it makes
+me smile.
+
+--------------------------------------------------------------------------------
+
+> # Cons and Co.
+>
+> What does the language lack?
+
+I'd like user-defined infix operators. Being able to model crypto protocols
+would be a very powerful thing (will require sequential features).
+
+> What are the shortcomings?
+
+It's difficult to write the type constraints for padding operations. We're
+thinking about connecting to more powerful solvers for these.
+
+> What do you want to improve?
+
+All of the above!
+
+--------------------------------------------------------------------------------
+
+> # Implementation
+> Where were the obstacles you met when implementing the language?
+> Which did you expect and what was harder than you assumed before?
+
+I don't think we had any surprises, since v2 of Cryptol both built on our
+experience with v1, and on a lot of powerful Haskell libraries (like SBV).
+Even so, solving the non-linear type constraints is a constant source
+of frustration and surprise.
+
+> What are the future plans for cryptol?
+
+Modeling protocols, integration with our SAW tools to verify and generate
+implementations in (e.g., C, Java, FPGA, ...)
+
+--------------------------------------------------------------------------------
+
+> # Galois.Inc
+>
+> Is there something you would like to mention at my user group?
+> Are you hiring?
+
+Yes, we are!
+
+> Is it possible to work from europe vai
+
+Unfortunately, not at present.
+
+--------------------------------------------------------------------------------
+
+> # Your Collaborators?
+>
+> Why did you work with the NSA? - After the revelations of Edward Snowden
+> it does not make a good impression and provides a good reason not to use
+> Cryptol.
+
+The NSA has two missions. Snowden's revelations are about the "offensive" side
+(pun not intended, but often apt). The other mission is defensive. There is
+talk about separating those missions into separate organizations, which has
+its pros and cons. We'll see.
+
+--------------------------------------------------------------------------------
+
+> Are there many backdoors in the language/compiler ?
+
+Allowing you to answer that question for yourself is a large reason for our
+open-sourcing it.  You can use the source on GitHub to build the same binaries
+as we release.
+
+> Can you tell me how the NSA is using this language?
+
+You'd have to ask them -- but the obvious answer is "to specify cryptographic
+algorithms in an unambiguous and readable way."
+
+[...]
+
+Resources
+=========
+
+Links
+-----
+
+- [cryptol](http://crytol.net)
+- [mail](mailto:cryptol@galois.com)
+- [slides](http://github.com/epsilonhalbe/Talks/Cryptalk)
+
+Book
+----
+
+- [Documentation](http://cryptol.net/documentation.html)
