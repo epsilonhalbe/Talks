@@ -337,6 +337,7 @@ more recommended thing. They are more solid and with cryptography you don't want
 to skimp on the solidity of your programs/algorithms!
 
 You can invoke proofs with
+
 ~~~haskell
 > :prove \x y -> (x^^2-y^^2)== ((x:[8])-y)*((y:[8])+x)
 ~~~
@@ -370,6 +371,8 @@ file: isSqrt x y = x == y*y
 > :sat \x -> isSqrt x (9:[8]) && ~(elem (x,[3,125,131,253]))
 Unsatisfiable.
 ~~~
+
+--------------------------------------------------------------------------------
 
 We see that there are a lot more solutions than the expected `3` and
 `-3 % 256 == 256`. Of course in other situations the SAT solver might not find

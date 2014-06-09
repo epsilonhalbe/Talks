@@ -31,20 +31,11 @@ code > span.fu { color: #06287e; }
 code > span.er { color: #ff0000; font-weight: bold; }
     </style>
     <link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
-    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
-    <script>
-      if( window.location.search.match( /print-pdf/gi ) ) {
-        var link = document.createElement( 'link' );
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = 'reveal.js/css/print/pdf.css';
-        document.getElementsByTagName( 'head' )[0].appendChild( link );
-      }
-    </script>
-    <!--[if lt IE 9]>
-    <script src="reveal.js/lib/js/html5shiv.js"></script>
-    <![endif]-->
-    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link rel="stylesheet" media="print" href="reveal.js/css/print/pdf.css" />
+  <!--[if lt IE 9]>
+  <script src="reveal.js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+    <script src="mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
 <body>
   <div class="reveal">
@@ -65,16 +56,16 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 </section>
 <section><section id="typeclasses" class="titleslide slide level1"><h1>Typeclasses</h1></section><section id="a-short-recap" class="slide level2">
-<h1>a short recap</h1>
-<p>Haskell has a quite uniqe way of polymorphism. So what you might know as classes from object orientation are not equivalent to typeclasses, but rather like interfaces in Java.</p>
+<h1>A short recap</h1>
+<p>Haskell has a quite unique way of polymorphism. So what you might know as classes from object orientation are not equivalent to typeclasses, but rather like interfaces in Java.</p>
 <p>The keyword for creating them is <code>class</code>. Though there are mechanisms for automatically deriving typeclasses you also need to know how to implement them on your own, with the keyword <code>instance</code>.</p>
-</section><section id="exempli-gratia" class="slide level2">
-<h1>exempli gratia</h1>
+</section><section id="an-example" class="slide level2">
+<h1>An example</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Eq</span> a <span class="kw">where</span>
 <span class="ot">  (==) ::</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 <span class="ot">  (/=) ::</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>
   x <span class="fu">/=</span> y <span class="fu">=</span> not (x <span class="fu">==</span> y</code></pre>
-<p>or</p>
+<p>Or</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="kw">where</span>
 <span class="ot">  fmap ::</span> a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre>
 </section><section class="slide level2">
@@ -97,10 +88,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>A common statement about monads is that they make pure programming with side effects possible - so let us look at a first example of functions that allow to have debugging informations.</p>
 <p>As a simple example I will only consider functions that have signature</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f,<span class="ot">g ::</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> <span class="dt">Double</span></code></pre>
-<p>then it is no problem at all to do calculations like <span class="math">\((g . f) x = g (f x)\)</span></p>
+<p>Then it is no problem at all to do calculations like <span class="math">\((g . f) x = g (f x)\)</span></p>
 </section><section id="modelling-side-effects" class="slide level2">
 <h1>Modelling side effects</h1>
-<p>If I want to include debug info, in a pure language, I have to augment the above signature to something like <code>f',g' :: Double -&gt; (Double, String)</code> in order to get an acompanying debug message.</p>
+<p>If I want to include debug info, in a pure language, I have to augment the above signature to something like <code>f',g' :: Double -&gt; (Double, String)</code> in order to get an accompanying debug message.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f&#39; x <span class="fu">=</span> (f x, <span class="st">&quot;f has been called: &quot;</span><span class="fu">++</span>show (f x) )
 g&#39; x <span class="fu">=</span> (g x, <span class="st">&quot;g has been called: &quot;</span><span class="fu">++</span>show (g x) )</code></pre>
 </section><section class="slide level2">
@@ -110,7 +101,7 @@ g&#39; x <span class="fu">=</span> (g x, <span class="st">&quot;g has been calle
 <li>We want to be able to collect the debug messages with every function call and</li>
 <li>It is now not obvious how to compose <code>f'</code> with <code>g'</code> with the dot-operator</li>
 </ol>
-<p>So let us define a new function composition and let us denote it <code>(•)</code> <em>the all-knowing eye sees all debug messages</em>, but to keep it simple we first try to solve the task of verarbeiting a (value,message)-pair with a function that only takes a single <code>Double</code> argument.</p>
+<p>So let us define a new function composition and let us denote it <code>(•)</code> <em>the all-knowing eye sees all debug messages</em>, but to keep it simple we first try to solve the task of processing a <code>(value,message)</code>-pair with a function that only takes a single <code>Double</code> argument.</p>
 </section><section id="one-ring-to-them-all" class="slide level2">
 <h1>One ring to <code>&gt;==</code> them all</h1>
 <p>This operation of <code>f' &gt;== (x,msg)</code> should be implemented quite easily, in a first step we want to produce the value and message of <code>f'</code> and then 'compose' the debug messages.</p>
@@ -118,10 +109,8 @@ g&#39; x <span class="fu">=</span> (g x, <span class="st">&quot;g has been calle
 
 <p>And indeed:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(x,msg) <span class="fu">&gt;&gt;=</span> f&#39; <span class="fu">=</span> <span class="kw">let</span> (fx,fmsg) <span class="fu">=</span> f&#39; x</code></pre>
-<div class="fragment">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">                 <span class="kw">in</span> (fx, msg<span class="fu">++</span><span class="st">&quot;\n&quot;</span><span class="fu">++</span>fmsg)</code></pre>
+<p>. . . <sub><del>haskell in (fx, msg++&quot;&quot;++fmsg)</del></sub></p>
 <p>So the next challenge is to write down the <code>(•)</code> all-knowing eye operator</p>
-</div>
 </section><section id="sauron" class="slide level2">
 <h1>Sauron</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(g&#39; • f&#39;) x <span class="fu">=</span> <span class="kw">let</span> (fx , fmsg) <span class="fu">=</span> f&#39;x
@@ -137,34 +126,34 @@ g&#39; x <span class="fu">=</span> (g x, <span class="st">&quot;g has been calle
 inject x <span class="fu">=</span> (x, <span class="st">&quot;&quot;</span>)</code></pre>
 </section><section id="lift" class="slide level2">
 <h1>Lift</h1>
-<p>Going back to our initial setting, note that <code>f</code> and <code>g</code> have both been functions that neither produced nor recieved (val, msg)-pairs, so we'd like to have a formalism to make an <code>f'</code> given <code>f</code>, or in other words lift <code>f</code> into the monad. Thus we define</p>
+<p>Going back to our initial setting, note that <code>f</code> and <code>g</code> have both been functions that neither produced nor received <code>(val, msg)</code>-pairs, so we'd like to have a formalism to make an <code>f'</code> given <code>f</code>, or in other words lift <code>f</code> into the monad. Thus we define</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">lift ::</span> (<span class="dt">Double</span> <span class="ot">-&gt;</span> <span class="dt">Double</span>) <span class="ot">-&gt;</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> (<span class="dt">Double</span>, <span class="dt">String</span>)
 (lift f) x <span class="fu">=</span> (f x, <span class="st">&quot;&quot;</span>)</code></pre>
-<p>or more abstractly</p>
+<p>Or more abstractly</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">lift f <span class="fu">=</span> inject <span class="fu">.</span> f</code></pre>
 </section><section id="law-and-order" class="slide level2">
 <h1>Law and Order</h1>
 <p>At last in this first chapter we want to observe that every well behaved monad respects a few laws, that lead to certain simplifications or optimizations.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">lift f • lift g <span class="fu">=</span> lift (f • g)</code></pre>
 <!--
-```haskell
+~~~haskell
 lift f • return = lift f
-```
+~~~
 -->
 
 </section></section>
 <section><section id="multivalued-functions" class="titleslide slide level1"><h1>Multivalued Functions</h1></section><section id="intro-1" class="slide level2">
 <h1>Intro</h1>
-<p>Another use-case for monads are functions that have more than one reasonable choice for results - Dan Piponi uses complex square roots as an example, but other examples could be a function that chooses which ice-cream flavour you want to have on your ice-cone. Everyone knows vanilla and chocolate go well with another, but chocolate and lemon is rarely a good coice. Another example would be musical chords - not all notes make a harmonic sound. And a last example I see is all possible moves in a game of chess or go.</p>
+<p>Another use-case for monads are functions that have more than one reasonable choice for results - Dan Piponi uses complex square roots as an example, but other examples could be a function that chooses which ice-cream flavour you want to have on your ice-cone. Everyone knows vanilla and chocolate go well with another, but chocolate and lemon is rarely a good choice. Another example would be musical chords - not all notes make a harmonic sound. And a last example I see is all possible moves in a game of chess or go.</p>
 </section><section id="modelling-multivalue-functions" class="slide level2">
 <h1>Modelling multivalue functions</h1>
-<p>Staying with Piponi we analyze complex roots of complex values, you might remember that the equation <span class="math">\(x^2 = a\)</span> has exactly two solutions for all <span class="math">\(a\neq 0\)</span>. For example the equation <span class="math">\[
+<p>Staying with Piponi we analyse complex roots of complex values, you might remember that the equation <span class="math">\(x^2 = a\)</span> has exactly two solutions for all <span class="math">\(a\neq 0\)</span>. For example the equation <span class="math">\[
  x^2 = 4
-\]</span> admits both <span class="math">\(x = +2\)</span> and <span class="math">\(x = -2\)</span> as solutions. For complex numbers this gets a bit more complicated but mathematicians have solved this problem long time ago and now we can defne the <code>root</code>-functions in haskell as follows.</p>
+\]</span> admits both <span class="math">\(x = +2\)</span> and <span class="math">\(x = -2\)</span> as solutions. For complex numbers this gets a bit more complicated but mathematicians have solved this problem long time ago and now we can define the <code>root</code>-functions in haskell as follows.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">root ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> [<span class="dt">Complex</span> <span class="dt">Double</span>]
 root n x <span class="fu">=</span> <span class="kw">let</span> (r,φ) <span class="fu">=</span> polar x
                rep <span class="fu">=</span> recip <span class="fu">$</span> fromIntegral n
-           <span class="kw">in</span> [(r<span class="fu">**</span>rep<span class="fu">:+</span><span class="dv">0</span>) <span class="fu">*</span> cis (φ<span class="fu">*</span>rep<span class="fu">+</span>(<span class="dv">2</span><span class="fu">*</span>fromIntegral k<span class="fu">*</span>pi<span class="fu">*</span>rep))<span class="fu">|</span> k <span class="ot">&lt;-</span> [<span class="dv">0</span><span class="fu">..</span>(n<span class="fu">-</span><span class="dv">1</span>)]]</code></pre>
+           <span class="kw">in</span> [(r<span class="fu">**</span>rep<span class="fu">:+</span><span class="dv">0</span>) <span class="fu">*</span> cis (φ*rep<span class="fu">+</span>(<span class="dv">2</span><span class="fu">*</span>fromIntegral k<span class="fu">*</span>pi<span class="fu">*</span>rep))<span class="fu">|</span> k <span class="ot">&lt;-</span> [<span class="dv">0</span><span class="fu">..</span>(n<span class="fu">-</span><span class="dv">1</span>)]]</code></pre>
 <p>Let us look at two special cases: <code>sqt = root 2</code> and <code>cbt = root 3</code>, if we now want to compute the 6th root by composing the above functions, we have but one problem - the types don't match. Of course we could do something like <code>map</code> but still the resulting type is <code>[[Complex Double]]</code>.</p>
 </section><section id="whats-the-right-solution" class="slide level2">
 <h1>What's the right solution</h1>
@@ -172,7 +161,7 @@ root n x <span class="fu">=</span> <span class="kw">let</span> (r,φ) <span clas
 <pre class="sourceCode haskell"><code class="sourceCode haskell">cplx <span class="fu">&gt;&gt;=</span> nroot <span class="fu">=</span> concatMap nroot cplx</code></pre>
 <p>And if we want a plain old <code>Complex Double</code>s to work with <code>(&gt;&gt;=)</code> we need to pack'em in brackets so <code>return</code>/<code>unit</code>/<code>pure</code> is defined as:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">pure z <span class="fu">=</span> [z]</code></pre>
-<p>that was easy, wasn't it? The last pieces <code>(•)</code> and <code>lift</code>, should be easy as well</p>
+<p>That was easy, wasn't it? The last pieces <code>(•)</code> and <code>lift</code>, should be easy as well</p>
 </section><section id="and" class="slide level2">
 <h1>And …</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">lift ::</span> (<span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span> <span class="dt">Double</span>) <span class="ot">-&gt;</span> <span class="dt">Complex</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> [<span class="dt">Complex</span> <span class="dt">Double</span>]
@@ -189,23 +178,27 @@ lift f x <span class="fu">=</span> [f x]
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Randomized</span> a <span class="fu">=</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (a, <span class="dt">StdGen</span>)</code></pre>
 <p>Which means given a Standard Random &quot;Number&quot; Generator we get both a random value <strong>and</strong> a new Generator, you can think of the Generator as a seed.</p>
 <p>So if we want some random in functions <code>f :: a -&gt; b</code>, <code>g: b -&gt; c</code>, we can view it as a more complex function</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f̃<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>)
-g̃<span class="ot"> ::</span> b <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (c,<span class="dt">StdGen</span>)</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f̃ <span class="ot">::</span> a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>)
+g̃ <span class="ot">::</span> b <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (c,<span class="dt">StdGen</span>)</code></pre>
 <p>with <code>Randomized</code> this would look much nicer</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f̃<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">Randomized</span> b
-g̃<span class="ot"> ::</span> b <span class="ot">-&gt;</span> <span class="dt">Randomized</span> c</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f̃ <span class="ot">::</span> a <span class="ot">-&gt;</span> <span class="dt">Randomized</span> b
+g̃ <span class="ot">::</span> b <span class="ot">-&gt;</span> <span class="dt">Randomized</span> c</code></pre>
 <p>But how the f*** does one combine those</p>
 </section><section id="bind-to-the-rescue" class="slide level2">
 <h1>Bind to the rescue</h1>
 <p>We start small and find out how to cram a <code>gen -&gt; (value, gen)</code> into such a <code>f̃</code></p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">(&gt;&gt;=) ::</span> (a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>)) <span class="ot">-&gt;</span>(<span class="dt">StdGen</span> <span class="ot">-&gt;</span> (a, <span class="dt">StdGen</span>)) <span class="ot">-&gt;</span> (<span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>))</code></pre>
-<div class="fragment">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">(&gt;&gt;=) ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Randomized</span> b) <span class="ot">-&gt;</span> <span class="dt">Randomized</span> a <span class="ot">-&gt;</span> <span class="dt">Randomized</span> b</code></pre>
-</div>
-<div class="fragment">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(f̃ <span class="fu">&gt;&gt;=</span> rx) seed <span class="fu">=</span> <span class="kw">let</span> (x,seed&#39;) <span class="fu">=</span> rx seed
-                  <span class="kw">in</span> f̃ x seed&#39;</code></pre>
-</div>
+<p>. . . <sub><del>haskell (&gt;&gt;=) :: (a -&gt; Randomized b) -&gt; Randomized a -&gt; Randomized b</del></sub> . . . <sub><del>haskell (f̃ &gt;&gt;= rx) seed = let (x,seed') = rx seed in f̃ x seed'</del></sub></p>
+<p>and what about <code>return</code>/<code>unit</code>/<code>pure</code> we know it should have the type</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">return<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (a,<span class="dt">StdGen</span>)</code></pre>
+<p>. . . <sub><del>haskell return ra seed = (ra, seed)</del></sub></p>
+</section><section id="a-bit-more-interesting" class="slide level2">
+<h1>a bit more interesting</h1>
+<p>are <code>(•)</code> and <code>lift</code></p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">lift ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>))
+(lift f) x seed <span class="fu">=</span> (f x, seed)</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">(•)<span class="ot"> ::</span> (b <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (c,<span class="dt">StdGen</span>)) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (b,<span class="dt">StdGen</span>)) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">StdGen</span> <span class="ot">-&gt;</span> (c,<span class="dt">StdGen</span>))
+(g̃ • f̃) x seed <span class="fu">=</span> (f̃ x <span class="fu">&gt;&gt;=</span> g̃) seed</code></pre>
 </section></section>
 <section><section id="abstract-monads" class="titleslide slide level1"><h1>Abstract Monads</h1></section><section id="intro-2" class="slide level2">
 <h1>Intro</h1>
@@ -239,7 +232,6 @@ g̃<span class="ot"> ::</span> b <span class="ot">-&gt;</span> <span class="dt">
     </div>
   </div>
 
-
   <script src="reveal.js/lib/js/head.min.js"></script>
   <script src="reveal.js/js/reveal.min.js"></script>
 
@@ -264,5 +256,5 @@ g̃<span class="ot"> ::</span> b <span class="ot">-&gt;</span> <span class="dt">
 //          { src: 'reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
 ]});
     </script>
-    </body>
+  </body>
 </html>

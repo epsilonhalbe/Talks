@@ -55,7 +55,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <script>hljs.initHighlightingOnLoad();</script>
 
 </section>
-<section><section id="cryptol" class="titleslide slide level1"><h1>Cryptol</h1></section><section id="facts-features" class="slide level2">
+<section><section id="cryptol" class="titleslide slide level1"><h1>Cryptol</h1></section><section id="disclaimer" class="slide level2">
+<h1>Disclaimer</h1>
+<p>A lot of the examples and content was taken from the book one can get at <a href="http://www.cryptol.net/documentation.html">cryptol.net</a>.</p>
+</section><section id="facts-features" class="slide level2">
 <h1>Facts &amp; Features</h1>
 <ul>
 <li>Written by Galois Inc.</li>
@@ -86,11 +89,12 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h1>Uncommon doesn't even grasp it</h1>
 <ol type="1">
 <li>Everything has a type</li>
-<li>Every number has a bit-size</li>
+<li>Every number has a bit size</li>
 </ol>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"> <span class="dv">12</span> <span class="fu">:</span> [<span class="dv">8</span>]</code></pre>
-<p>this number <code>12</code> is represented as 8-bit number.<br> You can find out about the type of something by</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">:</span>t <span class="dv">12</span></code></pre>
+<p>This number <code>12</code> is represented as 8-bit number.<br> You can find out about the type of something by</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>t <span class="dv">12</span>
+<span class="dv">12</span> <span class="fu">:</span> {a} (a <span class="fu">&gt;=</span> <span class="dv">4</span>, fin a) <span class="ot">=&gt;</span> [a]</code></pre>
 </section><section id="there-are-bitsbooleans" class="slide level2">
 <h1>There are Bits/Booleans</h1>
 <h3 id="true-and-false"><code>True</code> and <code>False</code></h3>
@@ -104,13 +108,15 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 </section><section id="numberswordscharacters" class="slide level2">
 <h1>Numbers/Words/Characters</h1>
-<p>Cryptol supports only <strong>nonnegative integers</strong> with no upper bound</p>
+<p>Cryptol supports only <strong>non-negative integers</strong> with no upper bound</p>
 <ul>
-<li>default base 16 (reset with <code>:set base=n</code> for 0≤n≤36)</li>
-<li>write with prefixes <code>0b_</code>, <code>0o_</code>, <code>0x_</code> or <code>0&lt;base&gt;_</code></li>
+<li>default base 16 (reset with <code>:set base=n</code> for <span class="math">\(n\in\{2,8,10,16\}\)</span>)</li>
+<li>write with prefixes <code>0b_</code>, <code>0o_</code>, <code>0x_</code></li>
 </ul>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="dv">0</span><span class="fu">&lt;</span><span class="dv">36</span><span class="fu">&gt;</span>cryptol
-<span class="fu">&gt;</span> 0b1010101</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> 0b1010011
+<span class="fu">&gt;</span> <span class="dv">0o123</span>
+<span class="fu">&gt;</span> <span class="dv">83</span>
+<span class="fu">&gt;</span> <span class="dv">0x53</span></code></pre>
 <p>But usually one writes characters like <code>'a'</code>,<code>'b'</code> and <code>'z'</code></p>
 </section><section id="tupels" class="slide level2">
 <h1>Tupels</h1>
@@ -119,14 +125,16 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>And there are accessors, called projections, written <code>(1,'c').2</code>, which work polymorphic for all tuples. But you can also use pattern matching like <code>(one, _ ) = (1, &quot;useless&quot;)</code>, where <code>_</code> is the discard variable.</p>
 </section><section id="sequences" class="slide level2">
 <h1>Sequences</h1>
-<p>Lists in Cryptol are the main workhorse syntax is as usual <code>[1]</code> or <code>[1..10]</code> or <code>[1,3..100]</code> or <code>[100,97..1]</code>. Like any other modern language it has list comprehensions <code>[x*y| x &lt;- [1..10], y &lt;- [11,12]]</code> but we also have parallel comprehensions, which work like a zip.</p>
+<p>Lists in Cryptol are the main workhorse syntax is as usual <code>[1]</code> or <code>[1..10]</code> or <code>[1,3..100]</code> or <code>[100,97..1]</code>. Like any other modern language it has list comprehensions</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">[x<span class="fu">*</span>y<span class="fu">|</span> x <span class="ot">&lt;-</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>], y <span class="ot">&lt;-</span> [<span class="dv">11</span>,<span class="dv">12</span>]]</code></pre>
+<p>But we also have parallel comprehensions, which work like a zip.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">[(i,j)<span class="fu">|</span> i <span class="ot">&lt;-</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]
       <span class="fu">|</span> j <span class="ot">&lt;-</span> [<span class="dv">10</span>,<span class="dv">9</span><span class="fu">..</span><span class="dv">1</span>]] <span class="fu">=</span> [(<span class="dv">1</span>,<span class="dv">10</span>),(<span class="dv">2</span>,<span class="dv">9</span>),(<span class="dv">3</span>,<span class="dv">8</span>),<span class="fu">..</span>,(<span class="dv">10</span>,<span class="dv">1</span>)]</code></pre>
 </section></section>
 <section><section id="on-types-and-functions" class="titleslide slide level1"><h1>On Types and Functions</h1></section><section id="lists-have-types-too" class="slide level2">
 <h1>Lists have types too</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">[<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>] <span class="fu">:</span> [<span class="dv">10</span>][<span class="dv">64</span>]</code></pre>
-<p>I am not too happy with that syntax but it means [1..10] is alist of lenght 10 with each element being a 64-bit integer. But this allows for really cool type level trickery and advanced awsomeness like doing algebra on type level.</p>
+<p>I am not too happy with that syntax but it means <code>[1..10]</code> is a list of length <code>10</code> with each element being a <code>64</code>-bit integer. But this allows for really cool type level trickery and advanced awesomeness like doing algebra on type level.</p>
 </section><section id="operations-on-lists" class="slide level2">
 <h1>Operations on lists</h1>
 <p>We have operators</p>
@@ -142,42 +150,47 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><code>&lt;&lt;&lt;</code> = rotate left</li>
 </ul>
 </section><section id="other-list-functions" class="slide level2">
-<h1>other list functions</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">join [[<span class="dv">1</span> <span class="fu">..</span> <span class="dv">4</span>], [<span class="dv">5</span> <span class="fu">..</span> <span class="dv">8</span>], [<span class="dv">9</span> <span class="fu">..</span> <span class="dv">12</span>]]
-join [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>], [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>], [<span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>]]
-transpose [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>], [<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>]]
-transpose [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>], [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>]]</code></pre>
+<h1>Other list functions</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> join [[<span class="dv">1</span> <span class="fu">..</span> <span class="dv">4</span>], [<span class="dv">5</span> <span class="fu">..</span> <span class="dv">8</span>], [<span class="dv">9</span> <span class="fu">..</span> <span class="dv">12</span>]]
+<span class="fu">&gt;</span> join [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>], [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>], [<span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>]]
+<span class="fu">&gt;</span> transpose [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>], [<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>]]
+<span class="fu">&gt;</span> transpose [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>], [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>]]</code></pre>
 </section><section id="functions-and-polymorphism" class="slide level2">
 <h1>Functions and polymorphism</h1>
 <p>One central piece of functional programming are of course functions, but one cannot speak of those without mentioning polymorphism.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> tail [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]
+<span class="dt">Assuming</span> a <span class="fu">=</span> <span class="dv">4</span>
 [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>]</code></pre>
-<p>But what type signature has <code>tail</code>?</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;:</span>t tail
+</section><section id="but-what-type-signature-has-tail" class="slide level2">
+<h1>But what type signature has <code>tail</code>?</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>t tail
 tail <span class="fu">:</span> {a, n} <span class="ot">=&gt;</span> [n<span class="fu">+</span><span class="dv">1</span>]a <span class="ot">-&gt;</span> [n]a</code></pre>
 <p>i.e. tail takes a list of <code>(n+1)</code>-elements of type <code>a</code> and spits out a list of <code>n</code>-elements of the same type. Note that <code>n</code> does not necessarily need to be finite!</p>
 </section><section id="functions-continued" class="slide level2">
 <h1>Functions continued</h1>
 <p>But there are functions that have a bit more interesting types</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;:</span>t split [<span class="dv">1</span><span class="fu">..</span><span class="dv">12</span>]
-split [<span class="dv">0</span><span class="fu">..</span><span class="dv">15</span>] <span class="fu">:</span> {β,cols,rows} (β <span class="fu">&gt;=</span> <span class="dv">4</span>, fin β, fin rows,
-    <span class="dv">16</span> <span class="fu">==</span> cols <span class="fu">*</span> row) <span class="ot">=&gt;</span> [cols][rows][β]</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>t split [<span class="dv">1</span><span class="fu">..</span><span class="dv">12</span>]
+split [<span class="dv">0</span><span class="fu">..</span><span class="dv">15</span>] <span class="fu">:</span> {a,cols,rows} (a <span class="fu">&gt;=</span> <span class="dv">4</span>, fin a, fin rows,
+    <span class="dv">16</span> <span class="fu">==</span> cols <span class="fu">*</span> row) <span class="ot">=&gt;</span> [cols][rows][a]</code></pre>
 <p>Let us note that this type signature needs a teensy tiny bit explanation</p>
-<ul>
-<li><code>β</code> denotes the bit-size; and the interpreter derived correctly that the largest number in this list (<code>12</code>) needs at least 4 bits for representation.</li>
-<li>another thing that the interpreter derived that the length of the list has to be the product of the rows and columns you split the list into.</li>
-</ul>
+</section><section class="slide level2">
+
+<pre class="sourceCode haskell"><code class="sourceCode haskell">a <span class="fu">&gt;=</span> <span class="dv">4</span>, a fin</code></pre>
+<p>Here <code>a</code> denotes the bit size; and the interpreter derived correctly that the largest number in this list (<code>12</code>) needs at least 4 bits for representation.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fin rows, <span class="dv">16</span> <span class="fu">==</span> cols <span class="fu">*</span> row</code></pre>
+<p>Another thing that the interpreter derived that the length of the list has to be the product of the rows and columns you split the list into.</p>
 </section><section id="backtick-syntax" class="slide level2">
 <h1>Backtick Syntax</h1>
 <p>But one grand thing is that cryptol provides syntax to pull type information down to the function call level with <em>'backtick'</em> syntax:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> split<span class="ot">`{8} [0..15]</span>
+<span class="ot">Assuming a = 4</span>
 <span class="ot">[[0,1],[2,3]..[14,15]]</span></code></pre>
 <p>Other notable functions used with that syntax are <code>take</code>, <code>drop</code> and <code>groupBy</code>.</p>
 </section><section id="numbers-again" class="slide level2">
 <h1>Numbers again</h1>
-<p>Numbers in cryptol are in reality just nicely printed bit-sequences, therefore you can use all the list functions for numbers as well!</p>
+<p>Numbers in cryptol are in reality just pretty printed bit-sequences, therefore you can use all the list functions for numbers as well!</p>
 </section><section id="and-then-to-characters-and-strings" class="slide level2">
-<h1>and then to characters and strings</h1>
+<h1>And then to characters and strings</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>set base<span class="fu">=</span><span class="dv">10</span>
 <span class="fu">&gt;</span> <span class="fu">:</span>set ascii<span class="fu">=</span>off
 <span class="fu">&gt;</span> <span class="ch">&#39;A&#39;</span>
@@ -188,26 +201,175 @@ split [<span class="dv">0</span><span class="fu">..</span><span class="dv">15</s
 <span class="dv">2</span></code></pre>
 </section><section id="zero-null-nada" class="slide level2">
 <h1>Zero, Null, Nada</h1>
-<p><code>zero</code> is a polymorphic 'value' and represents the number zero in whatever setting you like. Which is espcially useful with the complement function <code>~</code>.</p>
+<p>In cryptol <code>zero</code> is a polymorphic 'value' and represents the number zero in any setting you like. This is especially useful with the complement operator <code>~</code>.</p>
 </section></section>
-<section><section id="sweeet-as-sugar---a.k.a---moar-syntax" class="titleslide slide level1"><h1>Sweeet as sugar - a.k.a - moar syntax</h1></section><section id="streams" class="slide level2">
+<section><section id="more-syntactic-sugar" class="titleslide slide level1"><h1>More syntactic sugar</h1></section><section id="streams" class="slide level2">
 <h1>Streams</h1>
 <p>Often in crypto one encounters stream ciphers which are depicted</p>
-<!--![picture](/path/to/picture.jpeg "optional title")-->
+<!--![picture](/path/to/picture "optional title")-->
 <figure>
 <img src="streamDiagram.jpg" title="Stream Diagram" alt="Stream Diagram" /><figcaption>Stream Diagram</figcaption>
 </figure>
 </section><section class="slide level2">
 
-<p>and can be written in cryptol as follows</p>
+<p>And can be written in cryptol as follows</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">as <span class="fu">=</span> [<span class="dv">0x3F</span>, <span class="dv">0xE2</span>, <span class="dv">0x65</span>, <span class="dv">0xCA</span>] <span class="st"># new</span>
-   <span class="kw">where</span> [a <span class="fu">^</span> b <span class="fu">^</span> c <span class="fu">|</span> a <span class="ot">&lt;-</span>          as
-                    <span class="fu">|</span> b <span class="ot">&lt;-</span> drop<span class="ot">`{1} as</span>
-<span class="ot">                    | c &lt;- drop`</span>{<span class="dv">3</span>} as]</code></pre>
+   <span class="kw">where</span> new <span class="fu">=</span> [a <span class="fu">^</span> b <span class="fu">^</span> c <span class="fu">|</span> a <span class="ot">&lt;-</span>          as
+                          <span class="fu">|</span> b <span class="ot">&lt;-</span> drop<span class="ot">`{1} as</span>
+<span class="ot">                          | c &lt;- drop`</span>{<span class="dv">3</span>} as]</code></pre>
 </section><section id="polynomials" class="slide level2">
 <h1>Polynomials</h1>
-<p>For the AES algorithm one of the basic building blocks are polynomials with coefficients in <span class="math">\(\mathbb F_2\)</span>, i.e. <span class="math">\(\{0,1\}\)</span>. So we can write <span class="math">\(x^7+x^4+x+1\)</span></p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">&lt;|</span>x<span class="fu">^^</span><span class="dv">7</span><span class="fu">+</span>x<span class="fu">^^</span><span class="dv">4</span><span class="fu">+</span>x<span class="fu">+</span><span class="dv">1</span><span class="fu">|&gt;</span></code></pre>
+<p>For the AES algorithm one of the basic building blocks Galois fields, which are just polynomials with coefficients in <span class="math">\(\mathbb F_2\)</span>, i.e. <span class="math">\(\{0,1\}\)</span>. So we can write the term <span class="math">\(x^7+x^4+x+1\)</span></p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">&lt;|</span>x<span class="fu">^^</span><span class="dv">7</span><span class="fu">+</span>x<span class="fu">^^</span><span class="dv">4</span><span class="fu">+</span>x<span class="fu">+</span><span class="dv">1</span><span class="fu">|&gt;</span>
+<span class="dt">Assuming</span> a <span class="fu">=</span> <span class="dv">8</span>
+<span class="dv">147</span>
+<span class="fu">&gt;</span> <span class="fu">&lt;|</span>x<span class="fu">^^</span><span class="dv">2</span> <span class="fu">+</span>x <span class="fu">+</span><span class="dv">1</span><span class="fu">|&gt;</span>
+<span class="dt">Assuming</span> a <span class="fu">=</span> <span class="dv">3</span>
+<span class="dv">7</span></code></pre>
+</section><section class="slide level2">
+
+<p>As these polynomials are equivalent to numbers written in binary we get the result of <code>147</code>. Cryptol also provides polynomial multiplication, which I do not yet understand fully understand (maybe I'll provide some explanation when I do).</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">&lt;|</span>x<span class="fu">^^</span><span class="dv">7</span><span class="fu">+</span>x<span class="fu">^^</span><span class="dv">4</span><span class="fu">+</span>x<span class="fu">+</span><span class="dv">1</span><span class="fu">|&gt;</span> <span class="fu">^</span> <span class="fu">&lt;|</span> x<span class="fu">^^</span><span class="dv">2</span> <span class="fu">+</span>x <span class="fu">+</span><span class="dv">1</span><span class="fu">|&gt;</span>
+<span class="dt">Assuming</span> a <span class="fu">=</span> <span class="dv">8</span>
+<span class="dv">148</span></code></pre>
+</section></section>
+<section><section id="tests-satisfiability-and-provability" class="titleslide slide level1"><h1>Tests, Satisfiability and Provability</h1></section><section id="why-is-this-useful" class="slide level2">
+<h1>Why is this useful</h1>
+<p>A lot of cryptographic algorithms have universal properties</p>
+<ul>
+<li>most important equation: <code>decode . encode == id</code></li>
+<li>hash collisions: <code>hash x /= hash y || x == y</code></li>
+<li>for the Caesar cipher and related: <code>length . encode = length</code></li>
+<li>for many hash functions <code>length . hash = constant</code></li>
+</ul>
+</section><section id="tests" class="slide level2">
+<h1>Tests</h1>
+<p>As cryptol has its origin in the language of haskell it comes bundled with the powerful tool 'QuickCheck'. You can invoke this by</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>check \xx <span class="ot">-&gt;</span> reverse (reverse xx) <span class="fu">==</span> (xx <span class="fu">:</span>[<span class="dv">10</span>][<span class="dv">8</span>])
+<span class="dt">Using</span> random testing<span class="fu">.</span>
+<span class="dt">Passed</span> <span class="dv">100</span> tests<span class="fu">.</span>
+<span class="dt">Coverage</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">00</span><span class="fu">%</span> (<span class="dv">100</span> <span class="kw">of</span> <span class="dv">2</span><span class="fu">^^</span><span class="dv">80</span> values)</code></pre>
+</section><section id="proofs" class="slide level2">
+<h1>Proofs</h1>
+<p>While tests are a good indicator, where your code has gone wrong, proofs are the more recommended thing. They are more solid and with cryptography you don't want to skimp on the solidity of your programs/algorithms!</p>
+<p>You can invoke proofs with</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>prove \x y <span class="ot">-&gt;</span> (x<span class="fu">^^</span><span class="dv">2</span><span class="fu">-</span>y<span class="fu">^^</span><span class="dv">2</span>)<span class="fu">==</span> ((x<span class="fu">:</span>[<span class="dv">8</span>])<span class="fu">-</span>y)<span class="fu">*</span>((y<span class="fu">:</span>[<span class="dv">8</span>])<span class="fu">+</span>x)</code></pre>
+</section><section class="slide level2">
+
+<p>Cryptol itself does not provide a satisfiability solver but it uses the open source tool</p>
+<ul>
+<li><a href="http://cvc4.cs.nyu.edu/">CVC4</a></li>
+</ul>
+<p>Or alternatively</p>
+<ul>
+<li>Microsoft's <a href="http://z3.codeplex.com/">Z3</a></li>
+<li><a href="http://yices.csl.sri.com/download-yices2.shtml">Yices</a>.</li>
+</ul>
+</section><section id="satisfiability" class="slide level2">
+<h1>Satisfiability</h1>
+<p>SAT solver is a topic I've never touched before, but it is a quite powerful tool to have. Let us see this in an example:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">file<span class="fu">:</span> isSqrt x y <span class="fu">=</span> x <span class="fu">==</span> y<span class="fu">*</span>y
+<span class="fu">&gt;</span> <span class="fu">:</span>sat \x <span class="ot">-&gt;</span> isSqrt x (<span class="dv">9</span><span class="fu">:</span>[<span class="dv">8</span>]) <span class="fu">&amp;&amp;</span> <span class="fu">~</span>(elem (x,[<span class="dv">3</span>]))
+\x <span class="ot">-&gt;</span> isSqrt x (<span class="dv">9</span><span class="fu">:</span>[<span class="dv">8</span>]) <span class="fu">&amp;&amp;</span> <span class="fu">~</span>(elem (x,[<span class="dv">3</span>])) <span class="dv">125</span> <span class="dt">True</span>
+<span class="fu">&gt;</span> <span class="fu">:</span>sat \x <span class="ot">-&gt;</span> isSqrt x (<span class="dv">9</span><span class="fu">:</span>[<span class="dv">8</span>]) <span class="fu">&amp;&amp;</span> <span class="fu">~</span>(elem (x,[<span class="dv">3</span>,<span class="dv">125</span>]))
+\x <span class="ot">-&gt;</span> isSqrt x (<span class="dv">9</span><span class="fu">:</span>[<span class="dv">8</span>]) <span class="fu">&amp;&amp;</span> <span class="fu">~</span>(elem (x,[<span class="dv">3</span>,<span class="dv">125</span>])) <span class="dv">131</span> <span class="dt">True</span>
+<span class="fu">&gt;</span> <span class="fu">:</span>sat \x <span class="ot">-&gt;</span> isSqrt x (<span class="dv">9</span><span class="fu">:</span>[<span class="dv">8</span>]) <span class="fu">&amp;&amp;</span> <span class="fu">~</span>(elem (x,[<span class="dv">3</span>,<span class="dv">125</span>,<span class="dv">131</span>]))
+\x <span class="ot">-&gt;</span> isSqrt x (<span class="dv">9</span><span class="fu">:</span>[<span class="dv">8</span>]) <span class="fu">&amp;&amp;</span> <span class="fu">~</span>(elem (x,[<span class="dv">3</span>,<span class="dv">125</span>,<span class="dv">131</span>])) <span class="dv">253</span> <span class="dt">True</span>
+<span class="fu">&gt;</span> <span class="fu">:</span>sat \x <span class="ot">-&gt;</span> isSqrt x (<span class="dv">9</span><span class="fu">:</span>[<span class="dv">8</span>]) <span class="fu">&amp;&amp;</span> <span class="fu">~</span>(elem (x,[<span class="dv">3</span>,<span class="dv">125</span>,<span class="dv">131</span>,<span class="dv">253</span>]))
+<span class="dt">Unsatisfiable</span><span class="fu">.</span></code></pre>
+</section><section class="slide level2">
+
+<p>We see that there are a lot more solutions than the expected <code>3</code> and <code>-3 % 256 == 256</code>. Of course in other situations the SAT solver might not find solution in a given setting (here 8-bit integers) maybe just because the computing resources are not sufficient or maybe the general answer might not be true - so be careful and think about the answers given.</p>
+</section></section>
+<section><section id="e-mail" class="titleslide slide level1"><h1>E-mail</h1></section><section class="slide level2">
+
+<p>[...]</p>
+<blockquote>
+<h1>Infix operators</h1>
+<p>Am I right that the backtick syntax prevents you from using the infix syntax for normal functions, as used in haskell?</p>
+</blockquote>
+<p>I'm not positive, but our goal is for Cryptol to be familiar to crypto mathematicians, and this syntax, while good for Haskell programmers, wouldn't come as naturally to math folks.</p>
+</section><section class="slide level2">
+
+<blockquote>
+<h1>Pros and Co.</h1>
+<p>What do you consider the nicest features of cryptol?</p>
+<p>Mine is the type level algebra you can do with list length especially in combination with the backtick syntax!</p>
+</blockquote>
+<p>Absolutely! Another is the very powerful connection to SMT solvers, making :prove and :sat possible. Another is whenever I see a Cryptol program that either looks like, or improves upon, the original paper's specification, it makes me smile.</p>
+</section><section class="slide level2">
+
+<blockquote>
+<h1>Cons and Co.</h1>
+<p>What does the language lack?</p>
+</blockquote>
+<p>I'd like user-defined infix operators. Being able to model crypto protocols would be a very powerful thing (will require sequential features).</p>
+<blockquote>
+<p>What are the shortcomings?</p>
+</blockquote>
+<p>It's difficult to write the type constraints for padding operations. We're thinking about connecting to more powerful solvers for these.</p>
+<blockquote>
+<p>What do you want to improve?</p>
+</blockquote>
+<p>All of the above!</p>
+</section><section class="slide level2">
+
+<blockquote>
+<h1>Implementation</h1>
+<p>Where were the obstacles you met when implementing the language? Which did you expect and what was harder than you assumed before?</p>
+</blockquote>
+<p>I don't think we had any surprises, since v2 of Cryptol both built on our experience with v1, and on a lot of powerful Haskell libraries (like SBV). Even so, solving the non-linear type constraints is a constant source of frustration and surprise.</p>
+<blockquote>
+<p>What are the future plans for cryptol?</p>
+</blockquote>
+<p>Modeling protocols, integration with our SAW tools to verify and generate implementations in (e.g., C, Java, FPGA, ...)</p>
+</section><section class="slide level2">
+
+<blockquote>
+<h1>Galois.Inc</h1>
+<p>Is there something you would like to mention at my user group? Are you hiring?</p>
+</blockquote>
+<p>Yes, we are!</p>
+<blockquote>
+<p>Is it possible to work from europe vai</p>
+</blockquote>
+<p>Unfortunately, not at present.</p>
+</section><section class="slide level2">
+
+<blockquote>
+<h1>Your Collaborators?</h1>
+<p>Why did you work with the NSA? - After the revelations of Edward Snowden it does not make a good impression and provides a good reason not to use Cryptol.</p>
+</blockquote>
+<p>The NSA has two missions. Snowden's revelations are about the &quot;offensive&quot; side (pun not intended, but often apt). The other mission is defensive. There is talk about separating those missions into separate organizations, which has its pros and cons. We'll see.</p>
+</section><section class="slide level2">
+
+<blockquote>
+<p>Are there many backdoors in the language/compiler ?</p>
+</blockquote>
+<p>Allowing you to answer that question for yourself is a large reason for our open-sourcing it. You can use the source on GitHub to build the same binaries as we release.</p>
+<blockquote>
+<p>Can you tell me how the NSA is using this language?</p>
+</blockquote>
+<p>You'd have to ask them -- but the obvious answer is &quot;to specify cryptographic algorithms in an unambiguous and readable way.&quot;</p>
+<p>[...]</p>
+</section></section>
+<section><section id="resources" class="titleslide slide level1"><h1>Resources</h1></section><section id="links" class="slide level2">
+<h1>Links</h1>
+<ul>
+<li><a href="http://crytol.net">cryptol</a></li>
+<li><script type="text/javascript">
+<!--
+h='&#x67;&#x61;&#108;&#x6f;&#x69;&#x73;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#x63;&#114;&#x79;&#112;&#116;&#x6f;&#108;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'">'+'mail'+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#x6d;&#x61;&#x69;&#108;&#32;&#40;&#x63;&#114;&#x79;&#112;&#116;&#x6f;&#108;&#32;&#x61;&#116;&#32;&#x67;&#x61;&#108;&#x6f;&#x69;&#x73;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;&#x29;</noscript></li>
+<li><a href="http://github.com/epsilonhalbe/Talks/Cryptalk">slides</a></li>
+</ul>
+</section><section id="book" class="slide level2">
+<h1>Book</h1>
+<ul>
+<li><a href="http://cryptol.net/documentation.html">Documentation</a></li>
+</ul>
 </section></section>
     </div>
   </div>
