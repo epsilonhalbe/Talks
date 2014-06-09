@@ -11,10 +11,10 @@
 Typeclasses
 ===========
 
-a short recap
+A short recap
 -------------
 
-Haskell has a quite uniqe way of polymorphism. So what you might know as classes
+Haskell has a quite unique way of polymorphism. So what you might know as classes
 from object orientation are not equivalent to typeclasses, but rather like
 interfaces in Java.
 
@@ -22,26 +22,26 @@ The keyword for creating them is `class`. Though there are mechanisms for
 automatically deriving typeclasses you also need to know how to implement them
 on your own, with the keyword `instance`.
 
-exempli gratia
---------------
+An example
+----------
 
-```haskell
+~~~haskell
 class Eq a where
   (==) :: a -> a -> Bool
   (/=) :: a -> a -> Bool
   x /= y = not (x == y
-```
+~~~
 
-or
+Or
 
-```haskell
+~~~haskell
 class Functor f where
   fmap :: a -> b -> f a -> f b
-```
+~~~
 
 --------------------------------------------------------------------------------
 
-```haskell
+~~~haskell
 data Color = Red | Green | Blue
 
 instance Eq Color where
@@ -49,12 +49,12 @@ instance Eq Color where
   Green == Green = True
   Blue  == Blue  = True
   _     == _     = False
-```
+~~~
 or more easily
 
-```haskell
+~~~haskell
 data Color = Red | Green | Blue deriving (Eq)
-```
+~~~
 
 Use vs. Implementation
 ----------------------
@@ -77,23 +77,23 @@ have debugging informations.
 
 As a simple example I will only consider functions that have signature
 
-```haskell
+~~~haskell
 f,g :: Double -> Double
-```
+~~~
 
-then it is no problem at all to do calculations like $(g . f) x = g (f x)$
+Then it is no problem at all to do calculations like $(g . f) x = g (f x)$
 
 Modelling side effects
 ----------------------
 
 If I want to include debug info, in a pure language, I have to augment the above
 signature to something like `f',g' :: Double -> (Double, String)` in order to get
-an acompanying debug message.
+an accompanying debug message.
 
-```haskell
+~~~haskell
 f' x = (f x, "f has been called: "++show (f x) )
 g' x = (g x, "g has been called: "++show (g x) )
-```
+~~~
 
 --------------------------------------------------------------------------------
 
@@ -104,7 +104,7 @@ But now we end up with a crappy composition for
 
 So let us define a new function composition and let us denote it `(•)` _the
 all-knowing eye sees all debug messages_, but to keep it simple we first try to
-solve the task of verarbeiting a (value,message)-pair with a function that only
+solve the task of processing a `(value,message)`-pair with a function that only
 takes a single `Double` argument.
 
 One ring to `>==` them all
@@ -118,29 +118,29 @@ the debug messages.
 
 And indeed:
 
-```haskell
+~~~haskell
 (x,msg) >>= f' = let (fx,fmsg) = f' x
-```
+~~~
 . . .
-```haskell
+~~~haskell
                  in (fx, msg++"\n"++fmsg)
-```
+~~~
 
 So the next challenge is to write down the `(•)` all-knowing eye operator
 
 Sauron
 ------
 
-```haskell
+~~~haskell
 (g' • f') x = let (fx , fmsg) = f'x
                   (gfx, gmsg) = g fx
               in  (gfx, fmsg++"\n"++gmsg)
-```
+~~~
 or equivalently but shorter
 
-```haskell
+~~~haskell
 (g' • f') x = f' x >>= g'
-```
+~~~
 
 Pure/Unit/Return
 ----------------
@@ -152,28 +152,29 @@ in which monads came up and sometimes only make sense in the respective situatio
 
 In this situation I'd like to call this function inject.
 
-```haskell
+~~~haskell
 inject :: Double -> (Double, String)
 inject x = (x, "")
-```
+~~~
 
 Lift
 ----
 
 Going back to our initial setting, note that `f` and `g` have both been
-functions that neither produced nor recieved (val, msg)-pairs, so we'd like to
+functions that neither produced nor received `(val, msg)`-pairs, so we'd like to
 have a formalism to make an `f'` given `f`, or in other words lift `f` into the
 monad. Thus we define
 
-```haskell
+~~~haskell
 lift :: (Double -> Double) -> Double -> (Double, String)
 (lift f) x = (f x, "")
-```
+~~~
 
-or more abstractly
-```haskell
+Or more abstractly
+
+~~~haskell
 lift f = inject . f
-```
+~~~
 
 Law and Order
 -------------
@@ -181,14 +182,14 @@ Law and Order
 At last in this first chapter we want to observe that every well behaved monad
 respects a few laws, that lead to certain simplifications or optimizations.
 
-```haskell
+~~~haskell
 lift f • lift g = lift (f • g)
-```
+~~~
 
 <!--
-```haskell
+~~~haskell
 lift f • return = lift f
-```
+~~~
 -->
 
 Multivalued Functions
@@ -201,14 +202,14 @@ Another use-case for monads are functions that have more than one reasonable
 choice for results - Dan Piponi uses complex square roots as an example, but
 other examples could be a function that chooses which ice-cream flavour you want
 to have on your ice-cone. Everyone knows vanilla and chocolate go well with
-another, but chocolate and lemon is rarely a good coice. Another example would
+another, but chocolate and lemon is rarely a good choice. Another example would
 be musical chords - not all notes make a harmonic sound. And a last example I
 see is all possible moves in a game of chess or go.
 
 Modelling multivalue functions
 ------------------------------
 
-Staying with Piponi we analyze complex roots of complex values, you might
+Staying with Piponi we analyse complex roots of complex values, you might
 remember that the equation $x^2 = a$ has exactly two solutions for all $a\neq 0$.
 For example the equation
 $$
@@ -216,14 +217,14 @@ $$
 $$
 admits both $x = +2$ and $x = -2$ as solutions. For complex numbers this gets a
 bit more complicated but mathematicians have solved this problem long time ago
-and now we can defne the `root`-functions in haskell as follows.
+and now we can define the `root`-functions in haskell as follows.
 
-```haskell
+~~~haskell
 root :: Int -> Complex Double -> [Complex Double]
 root n x = let (r,φ) = polar x
                rep = recip $ fromIntegral n
            in [(r**rep:+0) * cis (φ*rep+(2*fromIntegral k*pi*rep))| k <- [0..(n-1)]]
-```
+~~~
 
 Let us look at two special cases: `sqt = root 2` and `cbt = root 3`, if we now
 want to compute the 6th root by composing the above functions, we have but one
@@ -236,30 +237,30 @@ What's the right solution
 We need a function of type `[Complex Double] -> (Complex Double -> [Complex Double]) -> [Complex Double]`
 to tie the result of a computation with `sqt` or `cbt`.
 
-```haskell
+~~~haskell
 cplx >>= nroot = concatMap nroot cplx
-```
+~~~
 
 And if we want a plain old `Complex Double`s to work with `(>>=)` we need to pack'em in
 brackets so `return`/`unit`/`pure` is defined as:
 
-```haskell
+~~~haskell
 pure z = [z]
-```
+~~~
 
-that was easy, wasn't it? The last pieces `(•)` and `lift`, should be easy as
+That was easy, wasn't it? The last pieces `(•)` and `lift`, should be easy as
 well
 
 And …
 -----
 
-```haskell
+~~~haskell
 lift :: (Complex Double -> Complex Double) -> Complex Double -> [Complex Double]
 lift f x = [f x]
 
 (•) :: (Complex Double -> [Complex Double]) -> (Complex Double -> [Complex Double]) -> (Complex Double -> [Complex Double])
 (g • f) x = f x >>= g
-```
+~~~
 
 Random Numbers with their generators
 ====================================
@@ -270,15 +271,15 @@ Can also be modeled with the help of monads
 So what do mean when we speak of random "numbers"?
 In haskell we mean functions of the following type:
 
-```haskell
+~~~haskell
 random :: StdGen -> (a, StdGen)
-```
+~~~
 
 we could hide this in a `data`-declaration
 
-```haskell
+~~~haskell
 data Randomized a = StdGen -> (a, StdGen)
-```
+~~~
 
 Which means given a Standard Random "Number" Generator we get both a random
 value **and** a new Generator, you can think of the Generator as a seed.
@@ -286,17 +287,17 @@ value **and** a new Generator, you can think of the Generator as a seed.
 So if we want some random in functions `f :: a -> b`, `g: b -> c`, we can
 view it as a more complex function
 
-```haskell
+~~~haskell
 f̃ :: a -> StdGen -> (b,StdGen)
 g̃ :: b -> StdGen -> (c,StdGen)
-```
+~~~
 
 with `Randomized` this would look much nicer
 
-```haskell
+~~~haskell
 f̃ :: a -> Randomized b
 g̃ :: b -> Randomized c
-```
+~~~
 
 But how the f\*\*\* does one combine those
 
@@ -305,43 +306,43 @@ Bind to the rescue
 
 We start small and find out how to cram a `gen -> (value, gen)` into such a `f̃`
 
-```haskell
+~~~haskell
 (>>=) :: (a -> StdGen -> (b,StdGen)) ->(StdGen -> (a, StdGen)) -> (StdGen -> (b,StdGen))
-```
+~~~
 . . .
-```haskell
+~~~haskell
 (>>=) :: (a -> Randomized b) -> Randomized a -> Randomized b
-```
+~~~
 . . .
-```haskell
+~~~haskell
 (f̃ >>= rx) seed = let (x,seed') = rx seed
                   in f̃ x seed'
-```
+~~~
 
 and what about `return`/`unit`/`pure` we know it should have the type
 
-```haskell
+~~~haskell
 return :: a -> StdGen -> (a,StdGen)
-```
+~~~
 . . .
-```haskell
+~~~haskell
 return ra seed = (ra, seed)
-```
+~~~
 
 a bit more interesting
 ----------------------
 
 are `(•)` and `lift`
 
-```haskell
+~~~haskell
 lift :: (a -> b) -> (a -> StdGen -> (b,StdGen))
 (lift f) x seed = (f x, seed)
-```
+~~~
 
-```haskell
+~~~haskell
 (•) :: (b -> StdGen -> (c,StdGen)) -> (a -> StdGen -> (b,StdGen)) -> (a -> StdGen -> (c,StdGen))
 (g̃ • f̃) x seed = (f̃ x >>= g̃) seed
-```
+~~~
 
 
 Abstract Monads
@@ -355,30 +356,29 @@ Before we are able to define monads we have to do a bit of work
 Functor
 -------
 
-```haskell
+~~~haskell
 class Functor f where
   fmap :: a -> b -> f a -> f b
-```
+~~~
 
 Applicative
 -----------
 
-```haskell
+~~~haskell
 class (Functor f) => Applicative f where
   pure :: a -> f a
   (<*>) :: f (a -> b) -> f a -> f b
-```
+~~~
 
 Definition
 ----------
 
 A monad is an applicative functor that has the following additional operation
 
-```haskell
+~~~haskell
 class (Applicative m) => Monad m a where
   (>>=) :: m a -> (a -> m b) -> m b
-```
-
+~~~
 
 Sources
 =======
