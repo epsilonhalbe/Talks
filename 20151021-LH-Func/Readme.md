@@ -16,7 +16,7 @@
 
 ## Object Orientation
 
-In your favourite OO language you see quite often constructs like
+In your average OO language you see quite often constructs like
 
 ```
 if (obj == null) {
@@ -59,7 +59,8 @@ So it's probably a good idea to separate those functions from their classes.
 ## intro
 
 Imagine an OO language, where there are class methods and a keyword `pure` that
-indicates a 'non-null' object, but every normal object works as usual, i.e. can
+indicates a 'non-null' object (similar to `@non-null` annotations in Java,
+`ObjectType nonnull` in Obj-C), but every normal object works as usual, i.e. can
 be `null`.
 
 And for every multi argument function can be applied partially, for example
@@ -67,6 +68,7 @@ And for every multi argument function can be applied partially, for example
 ```
 add3(1,2,3)  = add3(1,2)(3) = add3(1)(2,3) = add3(1)(2)(3)
 ```
+
 ## back to our `(?)`
 
 ```
@@ -218,9 +220,11 @@ obj ?.? (pure -> obj) -> obj
 null
 > 2 ?.? addToUserInput
 //      (user enters 3)
-3
+5
 > null ?.? addToUserInput
-//         (don't care what user does - but I'll ask)
+//         (don't care what user does -
+//             depending on a strict or lazy language
+//             addToUserInput will be called
 null
 ```
 ## why tf?
