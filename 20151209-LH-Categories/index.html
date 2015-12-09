@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Martin Heuschober">
+  <title>Category Theory</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../javascript/reveal.js/css/reveal.css">
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../javascript/reveal.js/css/theme/solarized.css" id="theme">
+  <link rel="stylesheet" href="custom.css"/>
+  <!-- Printing and PDF exports
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? '../javascript/reveal.js/css/print/pdf.css' : '../javascript/reveal.js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+-->
+  </script>
+  <!--[if lt IE 9]>
+  <script src="../javascript/reveal.js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+  <h1 class="title">Category Theory</h1>
+  <h1 class="subtitle">General abstract nonsense</h1>
+  <h2 class="author">Martin Heuschober</h2>
+  <h3 class="date">Vienna, Dec. 9<sup>th</sup> 2015,<br />License: <a href='https://creativecommons.org/licenses/by-sa/4.0/'>CC-BY-SA-4.0</a></h3>
+</section>
+
+<section><section id="foundation" class="titleslide slide level1"><h1>Foundation</h1></section><section id="math" class="slide level2">
+<h1>Math</h1>
+<p>blablabla</p>
+</section></section>
+<section><section id="category" class="titleslide slide level1"><h1>Category</h1></section><section id="definition" class="slide level2">
+<h1>Definition</h1>
+<p>A category <span class="math">\(\mathcal C\)</span> is</p>
+<ol type="1">
+<li><p>a class with members called <strong>Objects</strong> <span class="math">\(obj(\mathcal C)\)</span></p></li>
+<li><p>for every two objects <span class="math">\(X\)</span>, <span class="math">\(Y\)</span> we have a set <span class="math">\(\mathcal C(A,B)\)</span> with members called <strong>morphisms from <span class="math">\(A\)</span> to <span class="math">\(B\)</span></strong> such that <span class="math">\[\mathcal C(A,B)\cap\mathcal C(A&#39;,B&#39;) \neq \emptyset \Longrightarrow (A,B) = (A&#39;,B&#39;)\]</span></p></li>
+<li><p>for all objects <span class="math">\(X\)</span>, <span class="math">\(Y\)</span> and <span class="math">\(Z\)</span> we have a map <span class="math">\[\circ: \mathcal C(Y,Z)\times\mathcal C(X,Y)\rightarrow\mathcal C(X,Z)\]</span> called <strong>composition</strong> such that the law of associativity <span class="math">\[f \circ (g \circ h) = (f \circ g) \circ h\]</span> holds.</p></li>
+</ol>
+</section><section class="slide level2">
+
+<img src="images/fd04ba5575d23b68.png" />
+</section><section id="examples-small" class="slide level2">
+<h1>Examples small</h1>
+<ul>
+<li>every monoid <span class="math">\(\mathcal{M}\)</span> with composition being the monoidal <span class="math">\(\bullet\)</span> and identity given by the identity element of the monoid</li>
+<li>every set <span class="math">\(\mathcal{S}\)</span> with composition being good old function composition <span class="math">\(\circ\)</span> and identity given by the identity function.</li>
+</ul>
+</section><section id="examples-medium" class="slide level2">
+<h1>Examples medium</h1>
+<p>Every set of sets <span class="math">\(\mathcal{P}\)</span> with arrows being given by set inclusion <span class="math">\(\subseteq\)</span>.</p>
+<div class="fragment">
+<p>So for <span class="math">\(A\subseteq B\)</span> we have <span class="math">\(A\rightarrow B\)</span></p>
+</div>
+<div class="fragment">
+<p>So <span class="math">\(A\subseteq B\subseteq C\)</span> we get <span class="math">\(A\rightarrow B\rightarrow C\)</span> of course by transitivity of &quot;<span class="math">\(\subseteq\)</span>&quot; we get <span class="math">\(A\subseteq C\)</span>.</p>
+</div>
+</section><section id="examples-big" class="slide level2">
+<h1>Examples BIG</h1>
+<ul>
+<li><span class="math">\(\mathcal{Set}\)</span> … the category of all mathematical sets with functions between them</li>
+<li><span class="math">\(\mathbb{R}-\mathcal{VectorSpace}\)</span> … the category of all linear spaces over the field of real numbers, with arrows being linear functions</li>
+<li><span class="math">\(\mathcal{PO-Sets}\)</span> … the category of partially ordered sets with arrows being given by the inclusion</li>
+</ul>
+</section></section>
+<section><section id="connecting-categories" class="titleslide slide level1"><h1>Connecting Categories</h1></section><section id="functor" class="slide level2">
+<h1>Functor</h1>
+<img src="images/8f54e8b314280450.png" />
+<p>Functor</p>
+</section><section id="examples" class="slide level2">
+<h1>Examples</h1>
+<p>The fundamental group of a topological space <span class="math">\[\pi_1 : \mathcal{Top}\rightarrow\mathcal{Grp}\]</span></p>
+</section><section id="examples-small-1" class="slide level2">
+<h1>Examples small</h1>
+<ul>
+<li>every homomorphism between two monoids <span class="math">\(\mathcal M\)</span>, <span class="math">\(\mathcal N\)</span> can be viewed as a functor</li>
+<li><p>thus <code>length :: [a] -&gt; Int</code> is a functor</p></li>
+<li>every type <code>a</code> we get <code>[a]</code> as a functor</li>
+<li><p>I think this is the same as the free monoid over a set <span class="math">\(\mathcal S\)</span></p></li>
+</ul>
+</section><section id="examples-big-1" class="slide level2">
+<h1>Examples BIG</h1>
+<ul>
+<li>for every (small) category we have the forgetful functor <span class="math">\[F : \mathcal C \rightarrow\mathcal{Set}\]</span></li>
+<li>for every algebraic structure we have a functor from a more specialised into a general structure - for example every group is a monoid, therefore we have a functor <span class="math">\(\mathcal{Grp}\rightarrow\mathcal{Mon}\)</span></li>
+</ul>
+</section><section id="natural-transformation" class="slide level2">
+<h1>Natural Transformation</h1>
+<p>Of course one can make the existing theory a bit more interesting and associate functors with each other - we call a map between two functors <span class="math">\(F,G\)</span> a <strong>natural transformation</strong>, if for all objects <span class="math">\(X\)</span> of <span class="math">\(\mathcal C\)</span> we get a morphism <span class="math">\(φ_X\)</span>, such that for all morphisms <span class="math">\(f: X \rightarrow Y\)</span> the following diagram commutes.</p>
+</section><section class="slide level2">
+
+<img src="images/cf6fd3afbe3973d7.png" />
+</section><section id="examples---please" class="slide level2">
+<h1>Examples - please</h1>
+<ul>
+<li><code>flatten :: Tree a  -&gt; [a]</code></li>
+<li>??</li>
+</ul>
+</section></section>
+<section><section id="concepts" class="titleslide slide level1"><h1>Concepts</h1></section><section id="duality" class="slide level2">
+<h1>Duality</h1>
+<p>For every category <span class="math">\(C\)</span> we have the opposite category <span class="math">\(\mathcal C^{op}\)</span>, where the composition is defined as <span class="math">\(f \circ^{op} g = g \circ f\)</span>, we get it by simply reversing all arrows. For each 'concept' we thus get a 'concept' in the opposite category - we call such concepts <strong>dual</strong> and prefix the existing concept with 'co', as for example in <em>co</em>functor.</p>
+</section><section class="slide level2">
+
+<img src="images/6902ff0ab8df0190.png" />
+</section></section>
+<section><section id="special-objects" class="titleslide slide level1"><h1>Special Objects</h1></section><section id="terminal-objects" class="slide level2">
+<h1>Terminal Objects</h1>
+<p>An object <span class="math">\(T\)</span> in a category <span class="math">\(\mathcal C\)</span> is called <strong>terminal</strong>, if for every object <span class="math">\(X\)</span> in this category we have a unique morphism <span class="math">\(f_X : X \rightarrow T\)</span>.</p>
+</section><section class="slide level2">
+
+<img src="images/4b8593b69583bec4.png" />
+<p><small> Note: The index <span class="math">\(n\)</span> should not indicate that there are finitely many objects but just that there are many. </small></p>
+</section><section id="initial-objects" class="slide level2">
+<h1>Initial Objects</h1>
+<p>An object <span class="math">\(I\)</span> in a category <span class="math">\(\mathcal C\)</span> is called <strong>terminal</strong>, if for every object <span class="math">\(X\)</span> in this category we have a unique morphism <span class="math">\(f_X : I \rightarrow X\)</span>.</p>
+</section><section class="slide level2">
+
+<img src="images/2b90800a8d82a49b.png" />
+<p><small> Note: The index <span class="math">\(n\)</span> should not indicate that there are finitely many objects but just that there are many. </small></p>
+</section><section id="product-objects" class="slide level2">
+<h1>Product Objects</h1>
+<p>An object in a category is called <strong>product</strong> of <span class="math">\(X_1\)</span> and <span class="math">\(X_2\)</span>, if it has two morphisms <span class="math">\(pr_1\)</span> and <span class="math">\(pr_2\)</span>, and for all other objects <span class="math">\(Y\)</span> and morphisms <span class="math">\(f_1 : Y \rightarrow X_1\)</span> and <span class="math">\(f_2 : Y \rightarrow X_2\)</span> we get a unique map <span class="math">\(f\)</span> from <span class="math">\(Y\)</span> to this object. We write this object <span class="math">\(X_1\times X_2\)</span>.</p>
+</section><section class="slide level2">
+
+<img src="images/bb26d47c57dcf3a7.png" />
+</section><section id="haskell" class="slide level2">
+<h1>Haskell</h1>
+<ul>
+<li><span class="math">\(pr_1\)</span> = <code>fst</code></li>
+<li><span class="math">\(pr_2\)</span> = <code>snd</code></li>
+</ul>
+<div class="fragment">
+<p><code>import Control.Arrow</code></p>
+</div>
+<div class="fragment">
+<ul>
+<li><code>(***) :: Arrow a =&gt; a b c -&gt; a b' c' -&gt; a (b,b') (c,c')</code></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><span class="math">\(f\)</span> = <code>f₁ *** f₂</code></li>
+</ul>
+</div>
+</section><section id="and-with-duality" class="slide level2">
+<h1>And with duality</h1>
+</section><section id="sum-objects" class="slide level2">
+<h1>Sum Objects</h1>
+<p>An object in a category is called <strong>coproduct</strong> or <strong>sum</strong> of <span class="math">\(X_1\)</span> and <span class="math">\(X_2\)</span>, if it has two morphisms <span class="math">\(\iota_1\)</span> and <span class="math">\(\iota_2\)</span>, and for all other objects <span class="math">\(Y\)</span> and morphisms <span class="math">\(f_1 : X_1 \rightarrow Y\)</span> and <span class="math">\(f_2 : X_2 \rightarrow Y\)</span> we get a unique map <span class="math">\(f\)</span> from this object to <span class="math">\(Y\)</span>. We write this object <span class="math">\(X_1⊕X_2\)</span>.</p>
+</section><section class="slide level2">
+
+<img src="images/afa7980dade5696f.png" />
+</section><section id="haskell-1" class="slide level2">
+<h1>Haskell</h1>
+<ul>
+<li><span class="math">\(\iota_1\)</span> = <code>Left</code></li>
+<li><span class="math">\(\iota_2\)</span> = <code>Right</code></li>
+</ul>
+<div class="fragment">
+<p><code>import Data.Either</code></p>
+</div>
+<div class="fragment">
+<ul>
+<li><code>either :: (a -&gt; c) -&gt; (b -&gt; c) -&gt; (Either a b) -&gt; c</code></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><span class="math">\(f\)</span> = <code>either f₁ f₂</code></li>
+</ul>
+</div>
+</section><section class="slide level2">
+
+<p>Note that every sum/product is unique up to isomorphism.</p>
+</section><section id="proof" class="slide level2">
+<h1>Proof</h1>
+<img src="images/40cb207d663329b0.png" />
+</section></section>
+<section><section id="hask" class="titleslide slide level1"><h1><code>Hask</code></h1></section><section id="is-not-a-category" class="slide level2">
+<h1>is not a category</h1>
+</section><section id="why" class="slide level2">
+<h1>why?</h1>
+</section><section id="because-of" class="slide level2">
+<h1>because of</h1>
+</section><section id="undefined" class="slide level2">
+<h1><code>undefined</code></h1>
+<p>see <a href="https://wiki.haskell.org/Hask">haskell-wiki</a></p>
+</section></section>
+    </div>
+  </div>
+
+  <script src="../javascript/reveal.js/lib/js/head.min.js"></script>
+  <script src="../javascript/reveal.js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: '80%',
+        height: '80%',
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../javascript/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: '../javascript/reveal.js/plugin/zoom-js/zoom.js', async: true },
+          { src: '../javascript/reveal.js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
