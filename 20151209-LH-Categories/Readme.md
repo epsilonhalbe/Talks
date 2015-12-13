@@ -7,14 +7,13 @@ to: revealjs
 standalone: true
 theme: solarized
 mathjax: true
-revealjs-url: '../javascript/reveal.js'
-css: 'custom.css'
-height: "'80%'"
+revealjs-url: '../javascript/revealjs'
+css: ['custom.css']
+height: "'90%'"
 width: "'80%'"
 controls: true
 progress: true
 history: true
-center: true
 theme: 'solarized'
 transition: 'default'
 ...
@@ -25,7 +24,43 @@ Foundation
 Math
 ----
 
-blablabla
+Category theory is a bit complicated for two reasons (at least):
+
+1. The topic evolved in a quite advanced field in mathematics, therefore it
+   usually is mentioned late (I had to study 5-7 Semesters to find a seminar
+   about that topic).
+
+2. The foundation needed to speak about it properly one needs class theory
+   instead of set theory.
+
+ad 1
+----
+
+The topic where it evolved was 'Algebraic Topology', in the search of invariants
+of topological spaces, one discovered that you can associate a group with said
+space. Which is what we call now a Functor.
+
+ad 2
+----
+
+The minimal knowledge about class theory one needs is that we distinguish
+between two classes of containers - sets and classes, where classes are
+collections of magnitude beyond everything. Think of the `Set` of all `Set`s
+or the [Russel's Paradox](https://en.wikipedia.org/wiki/Russell%27s_paradox),
+the `set of all sets that contain itself`.
+
+--------------------------------------------------------------------------------
+
+In the following slides we will for example talk about the class of all vector
+spaces, which is a class. If you accept that the set of all sets is a class,
+then note that every vector space is determined by the set of its base vectors.
+Thus you get the class of all vector spaces is not a set.
+
+--------------------------------------------------------------------------------
+
+During all slides I will refer to classes that can be modeled by ordinary set
+theory as `sets` or `small classes`, and collections that cannot as `classes` or
+`proper classes`.
 
 Category
 ========
@@ -34,44 +69,79 @@ Definition
 ----------
 
 A category $\mathcal C$ is
+<small>
 
-1. a class with members called **Objects** $obj(\mathcal C)$
+1. A class with members called **Objects** $obj(\mathcal C)$
 
-2. for every two objects $X$, $Y$ we have a set $\mathcal C(A,B)$
-with members called **morphisms from $A$ to $B$** such that
-$$\mathcal C(A,B)\cap\mathcal C(A',B') \neq \emptyset \Longrightarrow (A,B) = (A',B')$$
+2. For every object $X$ there exists a unique morphism $id_X : X \rightarrow X$
+   *Note: If the object is unambiguous we often omit the subscript X.*
 
-3. for all objects $X$, $Y$ and $Z$ we have a map
+3. For every two objects $X$, $Y$ we have a set $\mathcal C(X,Y)$
+with members called **morphisms from $X$ to $Y$** such that we call two
+morphisms equal, if they have the same input set (=domain), output set (=codomain)
+and for each input the same output is generated.
+
+4. For all objects $X$, $Y$ and $Z$ we have a map
 $$\circ: \mathcal C(Y,Z)\times\mathcal C(X,Y)\rightarrow\mathcal C(X,Z)$$
 called **composition** such that the law of associativity
 $$f \circ (g \circ h) = (f \circ g) \circ h$$
 holds.
 
+</small>
+
 --------------------------------------------------------------------------------
 
-~~~ { .diagram width=900 height=600}
+~~~ { .diagram width=900 height=400}
 ptX = p2 (-1,2)
 ptY = p2 ( 1,2)
 ptZ = p2 (1,0)
+ptW = p2 (3,0)
+
+arr = arrowBetween' (with & arrowHead .~ dart
+                          & headGap .~ large
+                          & tailGap .~ large)
+spot pt = circle 0.05 # lw none # fc black # moveTo pt
+text' str =text str # scale 0.15
+example = ptX `arr` ptY
+       <> ptY `arr` ptZ
+       <> ptX `arr` ptZ
+       <> ptZ `arr` ptW
+       <> ptY `arr` ptW
+       <> spot ptX
+       <> spot ptY
+       <> spot ptZ
+       <> spot ptW
+       <> text' "X"   # moveTo (ptX .+^ r2 (-0.15,0))
+       <> text' "Y"   # moveTo (ptY .+^ r2 ( 0.15,0))
+       <> text' "Z"   # moveTo (ptZ .+^ r2 (0,-0.25))
+       <> text' "W"   # moveTo (ptW .+^ r2 (0,-0.25))
+       <> text' "f"   # moveTo (p2 (0, 2.15))
+       <> text' "g"   # moveTo (p2 (1.15,1))
+       <> text' "h"   # moveTo (p2 (2.00,-0.15))
+       <> text' "g∘f" # moveTo (p2 (-0.25,1))
+       <> text' "h∘g" # moveTo (p2 ( 2.25,1))
+~~~
+
+
+<small> any path from $X$ to $W$ must be equal in a category. </small>
+
+~~~ { .diagram width=200 height=100}
+ptX = p2 (-1,0)
+ptX' = p2 ( 1,0)
 
 arr = arrowBetween' (with & arrowHead .~ dart
                               & headGap .~ large
                               & tailGap .~ large)
 spot pt = circle 0.05 # lw none # fc black # moveTo pt
 text' str =text str # scale 0.15
-example = ptX `arr` ptY
-       <> ptY `arr` ptZ
-       <> ptX `arr` ptZ
+example = ptX `arr` ptX'
        <> spot ptX
-       <> spot ptY
-       <> spot ptZ
-       <> text' "X"   # moveTo (ptX .+^ r2 (-0.15,0))
-       <> text' "Y"   # moveTo (ptY .+^ r2 ( 0.15,0))
-       <> text' "Z"   # moveTo (ptZ .+^ r2 (0,-0.25))
-       <> text' "f"   # moveTo (p2 (0, 2.15))
-       <> text' "g"   # moveTo (p2 (1.15,1))
-       <> text' "g∘f" # moveTo (p2 (-0.25,1))
+       <> spot ptX'
+       <> text' "X"   # moveTo (ptX  .+^ r2 (-0.15,0))
+       <> text' "X"   # moveTo (ptX' .+^ r2 ( 0.15,0))
+       <> text' "id"   # moveTo (p2 (0, 0.15))
 ~~~
+
 
 Examples small
 --------------
@@ -114,13 +184,13 @@ Connecting Categories
 Functor
 -------
 
-~~~ { .diagram width=900 height=600}
+~~~ { .diagram width=900 height=500}
 ptX  = p2 (-1,2)
 ptY  = p2 ( 0,1)
 ptZ  = p2 ( 1,2)
-ptFX = p2 (-1,0)
-ptFY = p2 ( 0,-1)
-ptFZ = p2 ( 1,0)
+ptFX = p2 (-1,0.75)
+ptFY = p2 ( 0,-0.25)
+ptFZ = p2 ( 1,0.75)
 
 arr = arrowBetween' (with & arrowHead .~ dart
                           & headGap   .~ large
@@ -151,14 +221,15 @@ example = ptX `arr` ptZ
        <> text' "f"      # moveTo (p2 (-0.75, 1.55))
        <> text' "g"      # moveTo (p2 ( 0.75, 1.55))
        <> text' "g∘f"    # moveTo (p2 ( 0   , 2.15))
-       <> text' "F(g∘f)" # moveTo (p2 (0,-0.15))
-       <> text' "F(f)"   # moveTo (p2 (-0.75, -0.60))
-       <> text' "F(g)"   # moveTo (p2 ( 0.75, -0.60))
-       <> text' "F⇓"      # moveTo (p2 (-1.15,1))
-       <> text' "⇓F"      # moveTo (p2 ( 1.15,1))
+       <> text' "F(g∘f)" # moveTo (ptFX .+^ r2 (1,-0.15))
+       <> text' "F(f)"   # moveTo (ptFX .+^ r2 ( 0.25, -0.50))
+       <> text' "F(g)"   # moveTo (ptFZ .+^ r2 (-0.20, -0.50))
+       <> text' "F⇓"     # moveTo (p2 (-1.15,1.15))
+       <> text' "⇓F"     # moveTo (p2 ( 1.15,1.15))
 ~~~
-
+<p class="picline">
 Functor
+</p>
 
 Examples
 --------
