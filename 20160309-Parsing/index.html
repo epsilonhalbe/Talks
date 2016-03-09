@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Martin Heuschober">
+  <title>Parsing</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../javascript/revealjs/css/reveal.css">
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../javascript/revealjs/css/theme/solarized.css" id="theme">
+  <link rel="stylesheet" href="custom.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? '../javascript/revealjs/css/print/pdf.css' : '../javascript/revealjs/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="../javascript/revealjs/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+  <h1 class="title">Parsing</h1>
+  <h2 class="author">Martin Heuschober</h2>
+  <h3 class="date">Vienna, Mar. 9<sup>th</sup> 2015,<br />License: <a href='https://creativecommons.org/licenses/by-sa/4.0/'>CC-BY-SA-4.0</a></h3>
+</section>
+
+<section><section id="parsing" class="titleslide slide level1"><h1>Parsing</h1></section><section id="toc" class="slide level2">
+<h1>TOC</h1>
+<ul>
+<li>JSON</li>
+<li>BSON</li>
+<li>attoparsec</li>
+<li>parsec</li>
+</ul>
+</section><section id="what-is-parsing" class="slide level2">
+<h1>What is parsing?</h1>
+<p>The process of transforming a</p>
+<blockquote>
+<p><code>String</code> ⇒ <code>value</code></p>
+</blockquote>
+<p>where <code>value</code> usually means a custom datatype, describing a problem.</p>
+</section><section id="before-we-start" class="slide level2">
+<h1>Before we start</h1>
+<p>This presentation is accompanied by a haskell module, execute</p>
+<blockquote>
+<p>stack ghci --ghci-options -XOverloadedStrings</p>
+</blockquote>
+<p>to play around with it</p>
+</section><section id="value" class="slide level2">
+<h1>Value</h1>
+<p>The values we will have a look at in the following chapters will be</p>
+</section><section id="seaman.hs" class="slide level2">
+<h1>Seaman.hs</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Seaman</span> <span class="fu">=</span> <span class="dt">Captain</span>  {<span class="ot"> name   ::</span> <span class="dt">Text</span>
+                       ,<span class="ot"> vessel ::</span> <span class="dt">Text</span>
+                       ,<span class="ot"> age    ::</span> <span class="dt">Int</span> }
+            <span class="fu">|</span> <span class="dt">Mate</span> {<span class="ot"> name         ::</span> <span class="dt">Text</span>
+                   ,<span class="ot"> nextDutyTime ::</span> <span class="dt">UTCTime</span> }</code></pre></div>
+<p>for the <code>aeson</code> example.</p>
+</section><section id="body.hs" class="slide level2">
+<h1>Body.hs</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Body</span> <span class="fu">=</span> <span class="dt">Body</span> {<span class="ot"> bodyID ::</span> <span class="dt">Int</span>
+                 ,<span class="ot"> brandID ::</span> <span class="dt">Int</span> }</code></pre></div>
+<p>for the <code>bson</code> example.</p>
+</section><section id="commands.hs" class="slide level2">
+<h1>Commands.hs</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Command</span> <span class="fu">=</span> <span class="dt">POST</span> {_<span class="ot">message ::</span> <span class="dt">Message</span>}
+             <span class="fu">|</span> <span class="dt">READ</span> {_<span class="ot">userName ::</span> <span class="dt">UserName</span> }
+             <span class="fu">|</span> <span class="dt">FOLLOW</span> {_<span class="ot">who ::</span> <span class="dt">UserName</span> , _<span class="ot">whom ::</span> <span class="dt">UserName</span>}
+             <span class="fu">|</span> <span class="dt">WALL</span> {_<span class="ot">userName ::</span> <span class="dt">UserName</span>}
+             <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>)</code></pre></div>
+<p>for the <code>attoparsec</code> example</p>
+</section><section id="filmdb.hs" class="slide level2">
+<h1>FilmDB.hs</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">UserRatings</span> <span class="fu">=</span> (<span class="dt">String</span>, <span class="dt">Int</span>)
+<span class="kw">type</span> <span class="dt">Title</span> <span class="fu">=</span> <span class="dt">String</span>
+<span class="kw">type</span> <span class="dt">Director</span> <span class="fu">=</span> <span class="dt">String</span>
+<span class="kw">type</span> <span class="dt">Year</span> <span class="fu">=</span> <span class="dt">Int</span>
+<span class="kw">type</span> <span class="dt">Film</span> <span class="fu">=</span> (<span class="dt">Title</span>, <span class="dt">Director</span>, <span class="dt">Year</span>, [<span class="dt">UserRatings</span>])</code></pre></div>
+</section></section>
+<section><section id="aeson" class="titleslide slide level1"><h1>Aeson</h1></section><section id="api" class="slide level2">
+<h1>API</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">ToJSON</span> a <span class="kw">where</span>
+<span class="ot">    toJSON ::</span> a <span class="ot">-&gt;</span> <span class="dt">Value</span>
+<span class="ot">    toEncoding ::</span> a <span class="ot">-&gt;</span> <span class="dt">Encoding</span>
+<span class="kw">class</span> <span class="dt">FromJSON</span> a <span class="kw">where</span>
+<span class="ot">    parseJSON ::</span> <span class="dt">Value</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> a</code></pre></div>
+</section><section id="using-aeson" class="slide level2">
+<h1>Using <code>aeson</code></h1>
+<p>The simple case</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE DeriveGeneric #-}</span>
+<span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="kw">module</span> <span class="dt">Seaman</span> <span class="kw">where</span>
+
+<span class="kw">import           </span><span class="dt">Data.Aeson</span>
+<span class="kw">import           </span><span class="dt">GHC.Generics</span>
+<span class="co">-- import some more</span>
+
+<span class="kw">data</span> <span class="dt">Seaman</span> <span class="fu">=</span> <span class="dt">Captain</span>  {<span class="ot"> name   ::</span> <span class="dt">Text</span>
+                       ,<span class="ot"> vessel ::</span> <span class="dt">Text</span>
+                       ,<span class="ot"> age    ::</span> <span class="dt">Int</span> }
+            <span class="fu">|</span> <span class="dt">Mate</span> {<span class="ot"> name         ::</span> <span class="dt">Text</span>
+                   ,<span class="ot"> nextDutyTime ::</span> <span class="dt">UTCTime</span> }
+            <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Generic</span>)
+
+<span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Seaman</span>
+<span class="kw">instance</span> <span class="dt">ToJSON</span> <span class="dt">Seaman</span></code></pre></div>
+</section><section id="example" class="slide level2">
+<h1>Example</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span> encode mrd
+λ<span class="fu">&gt;</span> eitherDecode mrdFail</code></pre></div>
+</section></section>
+<section><section id="bson" class="titleslide slide level1"><h1>BSON</h1></section><section id="api-1" class="slide level2">
+<h1>API</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> (<span class="dt">Typeable</span> a, <span class="dt">Show</span> a, <span class="dt">Eq</span> a) <span class="ot">=&gt;</span> <span class="dt">Val</span> a <span class="kw">where</span>
+<span class="ot">    val ::</span> a <span class="ot">-&gt;</span> <span class="dt">Value</span>
+    <span class="fu">...</span>
+<span class="ot">    cast&#39; ::</span> <span class="dt">Value</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+    <span class="fu">...</span></code></pre></div>
+</section><section id="val" class="slide level2">
+<h1>val</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Val</span> <span class="dt">Body</span> <span class="kw">where</span>
+  val (<span class="dt">Body</span> body brand) <span class="fu">=</span> <span class="dt">Doc</span> [ <span class="st">&quot;bodyID&quot;</span>  <span class="fu">:=</span> (<span class="dt">Int64</span> <span class="fu">$</span> fromIntegral body)
+                              , <span class="st">&quot;brandID&quot;</span> <span class="fu">:=</span> (<span class="dt">Int64</span> <span class="fu">$</span> fromIntegral brand)]</code></pre></div>
+</section><section id="cast" class="slide level2">
+<h1>cast'</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">cast&#39; (<span class="dt">Doc</span> bson) <span class="fu">=</span> <span class="kw">case</span> (bson <span class="fu">!?</span> <span class="st">&quot;bodyID&quot;</span>) <span class="kw">of</span>
+            <span class="dt">Just</span> (<span class="dt">Int64</span> x) <span class="ot">-&gt;</span>
+               <span class="kw">case</span> (bson <span class="fu">!?</span> <span class="st">&quot;brandID&quot;</span>) <span class="kw">of</span>
+                     <span class="dt">Just</span> (<span class="dt">Int64</span> y) <span class="ot">-&gt;</span> <span class="dt">Just</span> (<span class="dt">Body</span> (fromIntegral x)
+                                  (fromIntegral y))
+                     <span class="dt">Just</span> _  <span class="ot">-&gt;</span> <span class="dt">Nothing</span>
+                     <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="dt">Nothing</span>
+            <span class="dt">Just</span> _ <span class="ot">-&gt;</span> <span class="dt">Nothing</span>
+            <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="dt">Nothing</span>
+cast&#39; (<span class="dt">Array</span> _) <span class="fu">=</span> undefined
+cast&#39; _ <span class="fu">=</span> <span class="dt">Nothing</span></code></pre></div>
+</section><section class="slide level2">
+
+<p>or simpler</p>
+</section><section id="val-cast" class="slide level2">
+<h1>val + cast'</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Val</span> <span class="dt">Body</span> <span class="kw">where</span>
+  val (<span class="dt">Body</span> body brand) <span class="fu">=</span> <span class="dt">Doc</span> [ <span class="st">&quot;bodyID&quot;</span>  <span class="fu">:=</span> (val body)
+                              , <span class="st">&quot;brandID&quot;</span> <span class="fu">:=</span> (val brand)]
+  cast&#39; (<span class="dt">Doc</span> bson) <span class="fu">=</span> <span class="kw">do</span> body  <span class="ot">&lt;-</span> (bson <span class="fu">!?</span> <span class="st">&quot;bodyID&quot;</span>)
+                        brand <span class="ot">&lt;-</span> (bson <span class="fu">!?</span> <span class="st">&quot;brandID&quot;</span>)
+                        <span class="dt">Body</span> <span class="fu">&lt;$&gt;</span> cast&#39; body <span class="fu">&lt;*&gt;</span> cast&#39; brand
+
+  cast&#39; _ <span class="fu">=</span> <span class="dt">Nothing</span></code></pre></div>
+</section><section id="example-1" class="slide level2">
+<h1>Example</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span> val (<span class="dt">Body</span> <span class="dv">30</span> <span class="dv">4</span>)
+λ<span class="fu">&gt;</span> cast&#39; <span class="fu">$</span> val (<span class="dt">Body</span> <span class="dv">30</span> <span class="dv">4</span>)<span class="ot"> ::</span> <span class="dt">Maybe</span> <span class="dt">Body</span></code></pre></div>
+</section></section>
+<section><section id="attoparsec" class="titleslide slide level1"><h1>Attoparsec</h1></section><section id="value-1" class="slide level2">
+<h1>Value</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Command</span> <span class="fu">=</span> <span class="dt">POST</span> {_<span class="ot">message ::</span> <span class="dt">Message</span>}
+             <span class="fu">|</span> <span class="dt">READ</span> {_<span class="ot">userName ::</span> <span class="dt">UserName</span> }
+             <span class="fu">|</span> <span class="dt">FOLLOW</span> {_<span class="ot">who ::</span> <span class="dt">UserName</span> , _<span class="ot">whom ::</span> <span class="dt">UserName</span>}
+             <span class="fu">|</span> <span class="dt">WALL</span> {_<span class="ot">userName ::</span> <span class="dt">UserName</span>}</code></pre></div>
+<p>from the <a href="https://github.com/sandromancuso/social_networking_kata">social networking kata</a></p>
+</section><section id="parsing-1" class="slide level2">
+<h1>Parsing</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">command ::</span> <span class="dt">Parser</span> <span class="dt">Command</span>
+command <span class="fu">=</span> choice <span class="fu">$</span> map (skipSpace <span class="fu">&gt;&gt;</span>)[post_, wall_, follow_, read_]
+  <span class="kw">where</span><span class="ot"> post_ ::</span> <span class="dt">Parser</span> <span class="dt">Command</span>
+        post_ <span class="fu">=</span> <span class="kw">do</span> _author <span class="ot">&lt;-</span> T.strip  <span class="fu">&lt;$&gt;</span> X.takeWhile (<span class="fu">/=</span> <span class="ch">&#39;-&#39;</span>)
+                   string <span class="st">&quot;-&gt;&quot;</span>
+                   _content <span class="ot">&lt;-</span> T.strip <span class="fu">&lt;$&gt;</span> takeText
+                   return (<span class="dt">POST</span> <span class="dt">Message</span>{<span class="fu">..</span>})
+        <span class="fu">..</span></code></pre></div>
+</section><section id="example-2" class="slide level2">
+<h1>Example</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span> parseOnly command <span class="fu">..</span></code></pre></div>
+</section></section>
+<section><section id="parsec" class="titleslide slide level1"><h1>Parsec</h1></section><section id="value-2" class="slide level2">
+<h1>Value</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">UserRatings</span> <span class="fu">=</span> (<span class="dt">String</span>, <span class="dt">Int</span>)
+<span class="kw">type</span> <span class="dt">Title</span> <span class="fu">=</span> <span class="dt">String</span>
+<span class="kw">type</span> <span class="dt">Director</span> <span class="fu">=</span> <span class="dt">String</span>
+<span class="kw">type</span> <span class="dt">Year</span> <span class="fu">=</span> <span class="dt">Int</span>
+<span class="kw">type</span> <span class="dt">Film</span> <span class="fu">=</span> (<span class="dt">Title</span>, <span class="dt">Director</span>, <span class="dt">Year</span>, [<span class="dt">UserRatings</span>])</code></pre></div>
+</section><section id="helpers" class="slide level2">
+<h1>Helpers</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">str ::</span> <span class="dt">Parser</span> <span class="dt">String</span>
+str <span class="fu">=</span> many1 (noneOf <span class="st">&quot;,&quot;</span>)
+
+<span class="ot">int ::</span> <span class="dt">Parser</span> <span class="dt">Int</span>
+int <span class="fu">=</span> read <span class="fu">&lt;$&gt;</span> many1 digit
+
+<span class="ot">userRating ::</span> <span class="dt">Parser</span> <span class="dt">UserRatings</span>
+userRating <span class="fu">=</span> <span class="kw">do</span> user <span class="ot">&lt;-</span> str
+                comma
+                rating <span class="ot">&lt;-</span> int
+                return (user, rating)
+
+<span class="ot">comma ::</span> <span class="dt">Parser</span> <span class="dt">Char</span>
+comma <span class="fu">=</span> char <span class="ch">&#39;,&#39;</span></code></pre></div>
+</section><section id="parsing-the-film" class="slide level2">
+<h1>Parsing the Film</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">film ::</span> <span class="dt">Parser</span> <span class="dt">Film</span>
+film <span class="fu">=</span> <span class="kw">do</span> title <span class="ot">&lt;-</span> str
+          comma
+          director <span class="ot">&lt;-</span> str
+          comma
+          year <span class="ot">&lt;-</span> int
+          comma
+          ratings <span class="ot">&lt;-</span> userRating <span class="ot">`sepBy`</span> comma
+          eof
+          return (title, director, year, ratings)</code></pre></div>
+</section><section id="example-3" class="slide level2">
+<h1>Example</h1>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span> myEitherParse film <span class="st">&quot;message string&quot;</span> testString</code></pre></div>
+</section></section>
+    </div>
+  </div>
+
+  <script src="../javascript/revealjs/lib/js/head.min.js"></script>
+  <script src="../javascript/revealjs/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: '80%',
+        height: '90%',
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../javascript/revealjs/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: '../javascript/revealjs/plugin/zoom-js/zoom.js', async: true },
+          { src: '../javascript/revealjs/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>

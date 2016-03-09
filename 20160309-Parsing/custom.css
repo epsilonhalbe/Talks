@@ -1,0 +1,12 @@
+p {
+    text-align: left;
+}
+
+p.picline {
+    text-align: center;
+    margin-top: 0px;
+}
+
+.reveal h1 {
+ font-size: 2.30em; 
+}
