@@ -25,7 +25,7 @@ data Command = POST {_message :: Message}
              deriving (Show, Eq)
 
 command :: Parser Command
-command = choice $ map (skipSpace >>)[post_, wall_, follow_, read_]
+command = choice $ map (\p -> skipSpace >> p *> skipSpace)[post_, wall_, follow_, read_]
   where post_ :: Parser Command
         post_ = do _author <- T.strip  <$> A.takeWhile (/= '-')
                    string "->"

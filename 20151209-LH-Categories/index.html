@@ -12,6 +12,14 @@
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../javascript/revealjs/css/theme/solarized.css" id="theme">
   <link rel="stylesheet" href="custom.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? '../javascript/revealjs/css/print/pdf.css' : '../javascript/revealjs/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
   <!--[if lt IE 9]>
   <script src="../javascript/revealjs/lib/js/html5shiv.js"></script>
   <![endif]-->
@@ -23,9 +31,9 @@
 
 <section>
   <h1 class="title">Category Theory</h1>
-  <h1 class="subtitle">General abstract nonsense</h1>
+  <h1 class="subtitle">general abstract nonsense</h1>
   <h2 class="author">Martin Heuschober</h2>
-  <h3 class="date">Vienna, Dec. 9<sup>th</sup> 2015,<br />License: <a href='https://creativecommons.org/licenses/by-sa/4.0/'>CC-BY-SA-4.0</a></h3>
+  <h3 class="date">Vienna, Apr. 13<sup>th</sup> 2016,<br />License: <a href='https://creativecommons.org/licenses/by-sa/4.0/'>CC-BY-SA-4.0</a></h3>
 </section>
 
 <section><section id="foundation" class="titleslide slide level1"><h1>Foundation</h1></section><section id="math" class="slide level2">
@@ -60,9 +68,9 @@
 <p></small></p>
 </section><section class="slide level2">
 
-<img src="images/8a7125285aa747bb.png" alt="" />
+<img src="images/163133857d07cf28.png" />
 <p><small> any path from <span class="math inline">\(X\)</span> to <span class="math inline">\(W\)</span> must be equal in a category. </small></p>
-<img src="images/15b322f8d134d884.png" alt="" />
+<img src="images/1c10ce6a1a8c3d36.png" />
 </section><section id="examples-small" class="slide level2">
 <h1>Examples small</h1>
 <ul>
@@ -88,7 +96,7 @@
 </section></section>
 <section><section id="connecting-categories" class="titleslide slide level1"><h1>Connecting Categories</h1></section><section id="functor" class="slide level2">
 <h1>Functor</h1>
-<img src="images/e4cad5fc729c0bc7.png" alt="" />
+<img src="images/d6415429cefadbbe.png" />
 <p class="picline">
 Functor
 </p>
@@ -114,7 +122,7 @@ Functor
 <p>Of course one can make the existing theory a bit more interesting and associate functors with each other - we call a map between two functors <span class="math inline">\(F,G\)</span> a <strong>natural transformation</strong>, if for all objects <span class="math inline">\(X\)</span> of <span class="math inline">\(\mathcal C\)</span> we get a morphism <span class="math inline">\(φ_X\)</span>, such that for all morphisms <span class="math inline">\(f: X \rightarrow Y\)</span> the following diagram commutes.</p>
 </section><section class="slide level2">
 
-<img src="images/cf6fd3afbe3973d7.png" alt="" />
+<img src="images/ffebba63efc7a176.png" />
 </section><section id="examples---please" class="slide level2">
 <h1>Examples - please</h1>
 <ul>
@@ -127,28 +135,28 @@ Functor
 <p>For every category <span class="math inline">\(C\)</span> we have the opposite category <span class="math inline">\(\mathcal C^{op}\)</span>, where the composition is defined as <span class="math inline">\(f \circ^{op} g = g \circ f\)</span>, we get it by simply reversing all arrows. For each 'concept' we thus get a 'concept' in the opposite category - we call such concepts <strong>dual</strong> and prefix the existing concept with 'co', as for example in <em>co</em>functor.</p>
 </section><section class="slide level2">
 
-<img src="images/6902ff0ab8df0190.png" alt="" />
+<img src="images/b12c96cc3996cbd8.png" />
 </section></section>
 <section><section id="special-objects" class="titleslide slide level1"><h1>Special Objects</h1></section><section id="terminal-objects" class="slide level2">
 <h1>Terminal Objects</h1>
 <p>An object <span class="math inline">\(T\)</span> in a category <span class="math inline">\(\mathcal C\)</span> is called <strong>terminal</strong>, if for every object <span class="math inline">\(X\)</span> in this category we have a unique morphism <span class="math inline">\(f_X : X \rightarrow T\)</span>.</p>
 </section><section class="slide level2">
 
-<img src="images/4b8593b69583bec4.png" alt="" />
+<img src="images/5e9a5da27ed9633d.png" />
 <p><small> Note: The index <span class="math inline">\(n\)</span> should not indicate that there are finitely many objects but just that there are many. </small></p>
 </section><section id="initial-objects" class="slide level2">
 <h1>Initial Objects</h1>
-<p>An object <span class="math inline">\(I\)</span> in a category <span class="math inline">\(\mathcal C\)</span> is called <strong>terminal</strong>, if for every object <span class="math inline">\(X\)</span> in this category we have a unique morphism <span class="math inline">\(f_X : I \rightarrow X\)</span>.</p>
+<p>An object <span class="math inline">\(I\)</span> in a category <span class="math inline">\(\mathcal C\)</span> is called <strong>initial</strong>, if for every object <span class="math inline">\(X\)</span> in this category we have a unique morphism <span class="math inline">\(f_X : I \rightarrow X\)</span>.</p>
 </section><section class="slide level2">
 
-<img src="images/2b90800a8d82a49b.png" alt="" />
+<img src="images/4fff305c776af5cc.png" />
 <p><small> Note: The index <span class="math inline">\(n\)</span> should not indicate that there are finitely many objects but just that there are many. </small></p>
 </section><section id="product-objects" class="slide level2">
 <h1>Product Objects</h1>
 <p>An object in a category is called <strong>product</strong> of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>, if it has two morphisms <span class="math inline">\(pr_1\)</span> and <span class="math inline">\(pr_2\)</span>, and for all other objects <span class="math inline">\(Y\)</span> and morphisms <span class="math inline">\(f_1 : Y \rightarrow X_1\)</span> and <span class="math inline">\(f_2 : Y \rightarrow X_2\)</span> we get a unique map <span class="math inline">\(f\)</span> from <span class="math inline">\(Y\)</span> to this object. We write this object <span class="math inline">\(X_1\times X_2\)</span>.</p>
 </section><section class="slide level2">
 
-<img src="images/bb26d47c57dcf3a7.png" alt="" />
+<img src="images/520e34ada5214e1e.png" />
 </section><section id="haskell" class="slide level2">
 <h1>Haskell</h1>
 <ul>
@@ -175,7 +183,7 @@ Functor
 <p>An object in a category is called <strong>coproduct</strong> or <strong>sum</strong> of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>, if it has two morphisms <span class="math inline">\(\iota_1\)</span> and <span class="math inline">\(\iota_2\)</span>, and for all other objects <span class="math inline">\(Y\)</span> and morphisms <span class="math inline">\(f_1 : X_1 \rightarrow Y\)</span> and <span class="math inline">\(f_2 : X_2 \rightarrow Y\)</span> we get a unique map <span class="math inline">\(f\)</span> from this object to <span class="math inline">\(Y\)</span>. We write this object <span class="math inline">\(X_1⊕X_2\)</span>.</p>
 </section><section class="slide level2">
 
-<img src="images/afa7980dade5696f.png" alt="" />
+<img src="images/1baa224c2170c6d6.png" />
 </section><section id="haskell-1" class="slide level2">
 <h1>Haskell</h1>
 <ul>
@@ -200,7 +208,27 @@ Functor
 <p>Note that every sum/product is unique up to isomorphism.</p>
 </section><section id="proof" class="slide level2">
 <h1>Proof</h1>
-<img src="images/40cb207d663329b0.png" alt="" />
+<img src="images/f7e50b20f67f6355.png" />
+<p><small> Suppose we had two objects <span class="math inline">\(X₁⊞X₂\)</span> and <span class="math inline">\(X₁⊕X₂\)</span> - with the universal property of the sum. </small></p>
+</section><section id="proof-1" class="slide level2">
+<h1>Proof</h1>
+<img src="images/bfdaaa32fa8d0113.png" />
+</section><section id="proof-2" class="slide level2">
+<h1>Proof</h1>
+<img src="images/38682f4a2c75a252.png" />
+</section><section id="proof-3" class="slide level2">
+<h1>Proof</h1>
+<img src="images/6fc197be489f6de3.png" />
+<img src="images/6991dc49be779527.png" />
+</section><section id="proof-4" class="slide level2">
+<h1>Proof</h1>
+<img src="images/6cf67d16f4e92203.png" />
+<p><small> <span class="math inline">\(u \circ d = id\)</span> </small></p>
+</section></section>
+<section><section id="awesome-things-i-know-nothing-of" class="titleslide slide level1"><h1>Awesome things I know nothing of</h1></section><section id="yoneda-lemma" class="slide level2">
+<h1>Yoneda Lemma</h1>
+</section><section id="kan-extensions" class="slide level2">
+<h1>Kan-Extensions</h1>
 </section></section>
 <section><section id="hask" class="titleslide slide level1"><h1><code>Hask</code></h1></section><section id="is-not-a-category" class="slide level2">
 <h1>is not a category</h1>
@@ -229,8 +257,6 @@ Functor
         progress: true,
         // Push each slide change to the browser history
         history: true,
-        // Vertical centering of slides
-        center: true,
         // Transition style
         transition: 'default', // none/fade/slide/convex/concave/zoom
         // The "normal" size of the presentation, aspect ratio will be preserved

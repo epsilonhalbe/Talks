@@ -1,8 +1,8 @@
 ---
 title: Category Theory
-subtitle: General abstract nonsense
+subtitle: general abstract nonsense
 author: Martin Heuschober
-date: "Vienna, Dec. 9<sup>th</sup> 2015,<br />License: <a href='https://creativecommons.org/licenses/by-sa/4.0/'>CC-BY-SA-4.0</a>"
+date: "Vienna, Apr. 13<sup>th</sup> 2016,<br />License: <a href='https://creativecommons.org/licenses/by-sa/4.0/'>CC-BY-SA-4.0</a>"
 to: revealjs
 standalone: true
 theme: solarized
@@ -389,7 +389,7 @@ just that there are many.
 Initial Objects
 ---------------
 
-An object $I$ in a category $\mathcal C$ is called **terminal**, if for every
+An object $I$ in a category $\mathcal C$ is called **initial**, if for every
 object $X$ in this category we have a unique morphism $f_X : I \rightarrow X$.
 
 --------------------------------------------------------------------------------
@@ -419,7 +419,7 @@ example = ptT `arr` ptX1
        <> text' "⋮"  # moveTo ptdots
        <> text' "⋮"  # moveTo (ptdots .+^ r2 (0, -0.5))
        <> text' "Xₙ" # moveTo (ptXn   .+^ r2 ( 0.25,0))
-       <> text' "T"  # moveTo (ptT    .+^ r2 (-0.25,0))
+       <> text' "I"  # moveTo (ptT    .+^ r2 (-0.25,0))
        <> text' "!f₁" # moveTo (p2 (0,1 + 0.65))
        <> text' "!fₙ" # moveTo (p2 (0,1 - 0.65))
 ~~~
@@ -561,7 +561,54 @@ Haskell
 
 --------------------------------------------------------------------------------
 
-Note that every sum/product is unique up to isomorphism.
+Note that every sum/product is unique up to unique isomorphism.
+
+Proof
+-----
+
+~~~ { .diagram width=900 height=600}
+ptY   = p2 ( 0,1)
+ptX1  = p2 (-2,1)
+ptX2  = p2 ( 2,1)
+ptX1' = p2 (-2,-1)
+ptX2' = p2 ( 2,-1)
+ptSum = p2 ( 0,-1)
+
+arr = flip $ arrowBetween' (with & arrowHead .~ dart
+                          & headGap   .~ large
+                          & tailGap   .~ large)
+
+drr = flip $ arrowBetween' (with & arrowHead  .~ dart
+                          & headGap    .~ large
+                          & tailGap    .~ large
+                          & shaftStyle %~ dashingG [0.02,0.05] 0)
+spot pt = circle 0.05 # lw none # fc black # moveTo pt
+text' str =text str # scale 0.15
+example = ptY   `arr` ptX1
+       <> ptY   `arr` ptX2
+       <> ptSum `arr` ptX1'
+       <> ptSum `arr` ptX2'
+       <> spot ptX1
+       <> spot ptX2
+       <> spot ptX1'
+       <> spot ptX2'
+       <> spot ptY
+       <> spot ptSum
+       <> text' "X₁⊞X₂"  # moveTo (ptY    .+^ r2 (0, 0.25))
+       <> text' "X₁"     # moveTo (ptX1   .+^ r2 (0, 0.25))
+       <> text' "X₂"     # moveTo (ptX2   .+^ r2 (0, 0.25))
+       <> text' "X₁⊕X₂"  # moveTo (ptSum  .+^ r2 (0,-0.25))
+       <> text' "X₁"     # moveTo (ptX1'  .+^ r2 (0,-0.25))
+       <> text' "X₂"     # moveTo (ptX2'  .+^ r2 (0,-0.25))
+       <> text' "ɩ₁"  # moveTo (ptX1  .+^ r2 ( 0.80, 0.15))
+       <> text' "ɩ₂"  # moveTo (ptX2  .+^ r2 (-0.80, 0.15))
+       <> text' "ɩ₁"  # moveTo (ptX1' .+^ r2 ( 0.80,-0.15))
+       <> text' "ɩ₂"  # moveTo (ptX2' .+^ r2 (-0.80,-0.15))
+~~~
+<small>
+Suppose we had two objects $X₁⊞X₂$ and $X₁⊕X₂$ - with the universal property of
+the sum.
+</small>
 
 Proof
 -----
@@ -587,7 +634,6 @@ example = ptY   `arr` ptX1
        <> ptSum `arr` ptX1
        <> ptSum `arr` ptX2
        <> ptY   `drr` ptSum
-       <> ptSum `drr` ptY
        <> spot ptX1
        <> spot ptX2
        <> spot ptY
@@ -595,14 +641,181 @@ example = ptY   `arr` ptX1
        <> text' "X₁⊞X₂"  # moveTo (ptY    .+^ r2 (0, 0.25))
        <> text' "X₁"     # moveTo (ptX1   .+^ r2 (0,-0.25))
        <> text' "X₂"     # moveTo (ptX2   .+^ r2 (0,-0.25))
-       <> text' "X₁⊕X₂"  # moveTo (ptSum  .+^ r2 (0,-0.25))
+       <> text' "Y"      # moveTo (ptSum  .+^ r2 (0,-0.25))
        <> text' "!u"  # moveTo (ptSum .+^ r2 ( 0.20,1 + 0.1))
-       <> text' "!d"  # moveTo (ptSum .+^ r2 (-0.20,1 - 0.1))
        <> text' "ɩ₁"  # moveTo (ptX1  .+^ r2 ( 0.80, 0.55))
        <> text' "ɩ₂"  # moveTo (ptX2  .+^ r2 (-0.80, 0.55))
+       <> text' "f₁"  # moveTo (ptX1  .+^ r2 ( 0.80,-0.55))
+       <> text' "f₂"  # moveTo (ptX2  .+^ r2 (-0.80,-0.55))
+~~~
+
+Proof
+-----
+
+~~~ { .diagram width=900 height=600}
+ptY   = p2 ( 0,1)
+ptX1  = p2 (-2,0)
+ptX2  = p2 ( 2,0)
+ptSum = p2 ( 0,-1)
+
+arr = flip $ arrowBetween' (with & arrowHead .~ dart
+                          & headGap   .~ large
+                          & tailGap   .~ large)
+
+drr = flip $ arrowBetween' (with & arrowHead  .~ dart
+                          & headGap    .~ large
+                          & tailGap    .~ large
+                          & shaftStyle %~ dashingG [0.02,0.05] 0)
+spot pt = circle 0.05 # lw none # fc black # moveTo pt
+text' str =text str # scale 0.15
+example = ptY   `arr` ptX1
+       <> ptY   `arr` ptX2
+       <> ptSum `arr` ptX1
+       <> ptSum `arr` ptX2
+       <> ptSum `drr` ptY
+       <> spot ptX1
+       <> spot ptX2
+       <> spot ptY
+       <> spot ptSum
+       <> text' "Y"      # moveTo (ptY    .+^ r2 (0, 0.25))
+       <> text' "X₁"     # moveTo (ptX1   .+^ r2 (0,-0.25))
+       <> text' "X₂"     # moveTo (ptX2   .+^ r2 (0,-0.25))
+       <> text' "X₁⊕X₂"  # moveTo (ptSum  .+^ r2 (0,-0.25))
+       <> text' "!d"  # moveTo (ptSum .+^ r2 (-0.20,1 - 0.1))
+       <> text' "f₁"  # moveTo (ptX1  .+^ r2 ( 0.80, 0.55))
+       <> text' "f₂"  # moveTo (ptX2  .+^ r2 (-0.80, 0.55))
        <> text' "ɩ₁"  # moveTo (ptX1  .+^ r2 ( 0.80,-0.55))
        <> text' "ɩ₂"  # moveTo (ptX2  .+^ r2 (-0.80,-0.55))
 ~~~
+
+Proof
+-----
+
+~~~ { .diagram width=900 height=350}
+ptSum  = p2 ( 0,0.5)
+ptX1   = p2 (-2,0)
+ptX2   = p2 ( 2,0)
+ptSum' = p2 ( 0,-0.5)
+
+arr = arrowBetween' (with & arrowHead .~ dart
+                          & headGap   .~ large
+                          & tailGap   .~ large)
+
+spot pt = circle 0.05 # lw none # fc black # moveTo pt
+text' str =text str # scale 0.15
+example = ptX1   `arr` ptSum
+       <> ptX2   `arr` ptSum
+       <> ptX1   `arr` ptSum'
+       <> ptX2   `arr` ptSum'
+       <> ptSum  `arr` ptSum'
+       <> ptSum' `arr` ptSum
+       <> spot ptX1
+       <> spot ptX2
+       <> spot ptSum
+       <> spot ptSum'
+       <> text' "X₁⊞X₂"  # moveTo (ptSum' .+^ r2 (0,-0.25))
+       <> text' "X₁"     # moveTo (ptX1   .+^ r2 (0, 0.25))
+       <> text' "X₂"     # moveTo (ptX2   .+^ r2 (0, 0.25))
+       <> text' "X₁⊞X₂"  # moveTo (ptSum  .+^ r2 (0, 0.25))
+       <> text' "ɩ₁"  # moveTo (ptX1  .+^ r2 ( 0.80, 0.35))
+       <> text' "ɩ₂"  # moveTo (ptX2  .+^ r2 (-0.80, 0.35))
+       <> text' "ɩ₁"  # moveTo (ptX1  .+^ r2 ( 0.80,-0.35))
+       <> text' "ɩ₂"  # moveTo (ptX2  .+^ r2 (-0.80,-0.35))
+       <> text' "id"  # moveTo (ptSum .+^ r2 ( 0.15,-0.50))
+~~~
+
+~~~ { .diagram width=900 height=350}
+ptSum  = p2 ( 0,0.5)
+ptX1   = p2 (-2,0)
+ptX2   = p2 ( 2,0)
+ptSum' = p2 ( 0,-0.5)
+
+arr = arrowBetween' (with & arrowHead .~ dart
+                          & headGap   .~ large
+                          & tailGap   .~ large)
+
+spot pt = circle 0.05 # lw none # fc black # moveTo pt
+text' str =text str # scale 0.15
+example = ptX1   `arr` ptSum
+       <> ptX2   `arr` ptSum
+       <> ptX1   `arr` ptSum'
+       <> ptX2   `arr` ptSum'
+       <> ptSum  `arr` ptSum'
+       <> ptSum' `arr` ptSum
+       <> spot ptX1
+       <> spot ptX2
+       <> spot ptSum
+       <> spot ptSum'
+       <> text' "X₁⊕X₂"  # moveTo (ptSum' .+^ r2 (0,-0.25))
+       <> text' "X₁"     # moveTo (ptX1   .+^ r2 (0, 0.25))
+       <> text' "X₂"     # moveTo (ptX2   .+^ r2 (0, 0.25))
+       <> text' "X₁⊕X₂"  # moveTo (ptSum  .+^ r2 (0, 0.25))
+       <> text' "ɩ₁"  # moveTo (ptX1  .+^ r2 ( 0.80, 0.35))
+       <> text' "ɩ₂"  # moveTo (ptX2  .+^ r2 (-0.80, 0.35))
+       <> text' "ɩ₁"  # moveTo (ptX1  .+^ r2 ( 0.80,-0.35))
+       <> text' "ɩ₂"  # moveTo (ptX2  .+^ r2 (-0.80,-0.35))
+       <> text' "id"  # moveTo (ptSum .+^ r2 ( 0.15,-0.50))
+~~~
+
+Proof
+-----
+
+~~~ { .diagram width=900 height=400}
+ptSum1  = p2 (-1,0)
+ptSum1' = p2 ( 1,0)
+ptSum2  = p2 ( 0,1)
+pTSum1  = p2 (3,0)
+pTSum2  = p2 (2,1)
+pTSum2' = p2 (4,1)
+
+arr = flip $ arrowBetween' (with & arrowHead .~ dart
+                          & headGap   .~ large
+                          & tailGap   .~ large)
+
+drr = flip $ arrowBetween' (with & arrowHead  .~ dart
+                          & headGap    .~ large
+                          & tailGap    .~ large
+                          & shaftStyle %~ dashingG [0.02,0.05] 0)
+spot pt = circle 0.05 # lw none # fc black # moveTo pt
+text' str =text str # scale 0.15
+example = ptSum2  `arr` ptSum1
+       <> ptSum1' `arr` ptSum2
+       <> ptSum1' `arr` ptSum1
+       <> spot ptSum1
+       <> spot ptSum1'
+       <> spot ptSum2
+       <> text' "X₁⊕X₂"  # moveTo (ptSum1  .+^ r2 (0,-0.25))
+       <> text' "X₁⊕X₂"  # moveTo (ptSum1' .+^ r2 (0,-0.25))
+       <> text' "X₁⊞X₂"  # moveTo (ptSum2  .+^ r2 (0, 0.25))
+       <> text' "!d"  # moveTo (ptSum2  .+^ r2 ( 0.60,- 0.4))
+       <> text' "!u"  # moveTo (ptSum2  .+^ r2 (-0.60,- 0.4))
+       <> text' "id"  # moveTo (ptSum1  .+^ r2 ( 1.00, 0.1))
+       <> pTSum1  `arr` pTSum2
+       <> pTSum2' `arr` pTSum1
+       <> pTSum2' `arr` pTSum2
+       <> spot pTSum2
+       <> spot pTSum2'
+       <> spot pTSum1
+       <> text' "X₁⊕X₂"  # moveTo (pTSum1  .+^ r2 (0,-0.25))
+       <> text' "X₁⊞X₂"  # moveTo (pTSum2  .+^ r2 (0, 0.25))
+       <> text' "X₁⊞X₂"  # moveTo (pTSum2' .+^ r2 (0, 0.25))
+       <> text' "!u"  # moveTo (pTSum1  .+^ r2 ( 0.60,0.4))
+       <> text' "!d"  # moveTo (pTSum1  .+^ r2 (-0.60,0.4))
+       <> text' "id"  # moveTo (pTSum2  .+^ r2 ( 1.00, 0.1))
+~~~
+<small>
+$u \circ d = id$
+</small>
+
+Awesome things I know nothing of
+================================
+
+Yoneda Lemma
+------------
+
+Kan-Extensions
+--------------
+
 
 `Hask`
 ======
