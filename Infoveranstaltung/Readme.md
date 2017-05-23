@@ -267,7 +267,7 @@ Wenn du noch den Bachelor vor dir hast oder gerade fertig bist und dich fragst:
 Hmm - Zahlt sich ein Master aus? Bin ich gut genug? Will ich bleiben oder nicht?
 
 Meiner Meinung nach bist du immer gut genug, oder wirst es sein wenn du den
-Master in der Tasche hast. Warum ? Es gibt mindestens ein Proseminar in dem du
+Master in der Tasche hast. Warum? Es gibt mindestens ein Proseminar in dem du
 gut warst, das dir leicht gefallen ist oder du dich richtig reingekniet hast.
 Oder die Vorlesung wo du noch extra Zeug wissen wolltest und dich gefragt hast
 wo das wohl weiter geht. Wenn nicht dann gibt es noch so vieles was du nicht
