@@ -35,7 +35,8 @@ Welche Sprachen haben ein starkes Typsystem?
 Timeline
 --------
 
-![Timeline]
+![Timeline - Haskell]
+![Timeline - Java]
 
 Syntax & Features
 -----------------
@@ -466,11 +467,35 @@ damit muss `f` der Wertebereich von `f` `a` sein und der Zielbereich `b`
 Und man sich klauen kann
 ------------------------
 
-- Generics
-- Arrays vermeiden
+Generics verwenden und Arrays vermeiden
+---------------------------------------
+
+    ```{.java .fragment}
+        public static void main(String[] args) {
+            List <Shape> lst = new ArrayList<>();
+            lst.add(new Circle(1.0));
+            lst.add(new Square(1.0));
+            for (Shape s : lst) {
+               System.out.println(s.area());
+            }
+            Circle[] circles = new Circle[2];
+            Shape[] arr = circles;
+            arr[0] = new Circle(1.0);
+            arr[1] = new Square(1.0);
+            for (Shape s : arr) {
+               System.out.println(s);
+            }
+        }
+    ```
+
 - `@NonNullable`/`@Nullable`
 - IO minimieren
-- mutable State minimieren - z.B. `List.append(x)` verändert eine Liste
+- mutable State minimieren - z.B. `List.append(x)` verändert eine Liste und ist daher eine schlechte Idee
+- Abstraktionen wie Funktor, Applicative, Monad, Monoid etc.
+
+--------------------------------------------------------------------------------
 
 [Tiobe - Programmiersprachen]: ./img/tiobe.com-12.6.2017.png "Tiobe - Programmiersprachen" {width=700px}
 [Tiobe - Haskell]: ./img/tiobe.com-12.6.2017-haskell.png "Tiobe - Haskell" {width=700px}
+[Timeline - Haskell]: ./img/history_of_programming_languages-haskell.png "Timeline - Haskell"
+[Timeline - Java]: ./img/history_of_programming_languages-java.png "Timeline - Java"
