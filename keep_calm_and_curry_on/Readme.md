@@ -366,19 +366,111 @@ Dinge die das Haskell Typsystem gut macht
 Und andere Systeme nicht können:
 --------------------------------
 
-- IO eingrenzen
-- Higher kinded types `List<T>` ist ⇒ was ist `List` dann?
-- Sum types
-- Typinferez
-- Pattern matching
+IO eingrenzen
+-------------
+
+```haskell
+readLn :: Read a => IO a
+fmap readMay . getLine :: Read a => IO (Maybe a)
+withSqliteConn :: ConnString -> Query a -> IO a
+```
+
+Sum types
+---------
+
+```{.haskell .fragment}
+data Either a b = Left a | Right b
+```
+
+```{.haskell .fragment}
+data JSON = JsonString Text
+          | JsonNumber Rational
+          | JsonBool   Bool
+          | JsonNull
+          | JsonObject (Map Text JSON)
+          | JsonArray [JSON]
+```
+Pattern matching
+----------------
+
+```haskell
+data IPv4 = IPv4 Word8 Word8 Word8 Word8
+runParser :: Parser a -> String -> Either String a
+```
+
+```{.haskell .fragment}
+ipv4 :: Parser IPv4
+ipv4 = do a <- check =<< decimal
+          dot
+          b <- check =<< decimal
+          dot
+          c <- check =<< decimal
+          dot
+          d <- check =<< decimal
+          return IPv4 a b c d
+  where dot :: Parser ()
+        dot = void $ char '.'
+        check :: Integral -> Parser Word8
+        check x = do unless (0 <= x && x <= 256) $
+                       fail ("failed parsing IPv4 address for " ++ show x)
+                     return $ fromIntegral x
+```
+
+```{.haskell .fragment}
+case runParser ipv4 "127.-1.120.255"
+  of Left msg -> do something with errormessage
+     Right x -> do something with result
+```
+
+Typinferez
+----------
+
+```haskell
+map :: _
+map f [] = []
+map f (x:xx) = f x: map f xx
+```
+
+--------------------------------------------------------------------------------
+
+`[]` und `(:)` sind Listenkonstruktoren (leere Liste und `cons`-Operator)
+  => 2tes Argument von `map` muss eine Liste sein.
+```{.haskell .fragment}
+    map :: _ -> [a] -> _
+```
+
+. . .
+
+ebenso das Ergebnis
+```{.haskell .fragment}
+    map :: _ -> [a] -> [b]
+```
+
+--------------------------------------------------------------------------------
+
+`f` wird in Zeile 2 auf das erste Element der Argument-Liste angewandt =>
+damit muss `f` eine Funktion sein
+```{.haskell .fragment}
+    map :: (x -> y) -> [a] -> [b]
+```
+
+. . .
+
+`f` wird in Zeile 2 auf das erste Element der Argument-Liste angewandt =>
+damit muss `f` der Wertebereich von `f` `a` sein und der Zielbereich `b`
+```{.haskell .fragment}
+    map :: (a -> b) -> [a] -> [b]
+```
+
 
 Und man sich klauen kann
 ------------------------
 
 - Generics
+- Arrays vermeiden
 - `@NonNullable`/`@Nullable`
 - IO minimieren
-- mutable State minimieren - z.B. `List.append(x)`
+- mutable State minimieren - z.B. `List.append(x)` verändert eine Liste
 
 [Tiobe - Programmiersprachen]: ./img/tiobe.com-12.6.2017.png "Tiobe - Programmiersprachen" {width=700px}
 [Tiobe - Haskell]: ./img/tiobe.com-12.6.2017-haskell.png "Tiobe - Haskell" {width=700px}
