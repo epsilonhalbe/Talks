@@ -1,6 +1,9 @@
 ---
 title: Keep calm and curry on
-subtitle: Funktionales Programmieren mit Beispielen in Haskell und Java
+subtitle: Funktionales Programmieren mit Beispielen in<br/>
+  <img style="box-shadow:none;" src="./img/haskell-logo.svg"/><br/>
+  und <br/>
+  <img style="box-shadow:none;" src="./img/java.png"/>
 author: Martin Heuschober
 date: "Wien, 28. Juni 2017,<br />License: <a href='https://creativecommons.org/licenses/by-sa/4.0/'>CC-BY-SA-4.0</a>"
 to: revealjs
@@ -37,6 +40,8 @@ Timeline
 
 ![Timeline - Haskell]
 ![Timeline - Java]
+
+[History of Programming languages]
 
 Syntax & Features
 -----------------
@@ -104,15 +109,24 @@ Funktional jetzt aber wirklich
 Eine Programmiersprache darf sich (meiner Meinung nach) **funktional** nennen
 wenn:
 
- - Funktionen als Parameter bzw. Rückgabewerte von anderen Funktionen
-auftauchen können
+ - Funktionen als Parameter bzw. Rückgabewerte von anderen Funktionen auftauchen können
  - Funktionen in "Variablen" gesteckt werden können
  - jede Funktion einen Rückgabewert hat.
 
-Bonuspunkte für partielle Funktionsaufrufe, i.e.
+Bonuspunkte gibt es für partielle Funktionsaufrufe, i.e.
 
  -  wenn eine Funktion mit mehreren Parametern mit nur einem Parameter aufrufbar ist,
     und eine Funktion mit um einen Parameter weniger zurückgibt.
+
+Was ist eine Funktion
+---------------------
+
++------------------------------------------------------------+------------------------------------------------------------+
+| ```haskell                                                 | [Java8]                                                    |
+| f :: a -> b                                                |                                                            |
+| g :: a -> b -> c                                           |                                                            |
+| ```                                                        |                                                            |
++------------------------------------------------------------+------------------------------------------------------------+
 
 --------------------------------------------------------------------------------
 
@@ -121,13 +135,13 @@ Bonuspunkte für partielle Funktionsaufrufe, i.e.
 | λ> :set -XOverloadedStrings                                |                                                            |
 | λ> import qualified Data.Text as T                         |                                                            |
 | λ> uppercased = T.toUpper "lowercase"                      | ☕> "lowercase".toUpperCase()                              |
-| λ> uppercaser = T.toUpper                                  | ☕> ????                                                   |
+| λ> uppercaser = T.toUpper                                  | ☕> String::toUpperCase()                                  |
 | ```                                                        | ```                                                        |
 +------------------------------------------------------------+------------------------------------------------------------+
 
 --------------------------------------------------------------------------------
 
-[Aufgabe: (Stackoverflow)](https://stackoverflow.com/questions/43493437/haskell-replicate-function/43494383#43494383) Mache aus einer Liste: `[5,4,2]` => `"+-----+----+--+"`
+[Aufgabe: (Stackoverflow)] Mache aus einer Liste: `[5,4,2]` => `"+-----+----+--+"`
 
 +--------------------------------------------------------+---------------------------------------------------------------+
 |```{.java .fragment}                                    | ```{.haskell .fragment}                                       |
@@ -142,6 +156,13 @@ Bonuspunkte für partielle Funktionsaufrufe, i.e.
 |    return result;                                      |                                                               |
 |}                                                       |                                                               |
 |```                                                     |                                                               |
++--------------------------------------------------------+---------------------------------------------------------------+
+
+
+
+Mache aus einer Liste: `[5,4,2]` => `"|     +    +  |"`
+--------------------------------------------------------------------------------
+
 +--------------------------------------------------------+---------------------------------------------------------------+
 |```{.java .fragment}                                    | ```{.haskell .fragment}                                       |
 |String fence (List<Integer> lst){                       | fence :: [Int] -> String                                      |
@@ -183,14 +204,14 @@ Bonuspunkte für partielle Funktionsaufrufe, i.e.
 Partielle Funktionsaufrufe
 --------------------------
 
-+----------------------------------------------------+----------------------------------------------------------------------+
-| ```{.haskell .fragment}                            | ```{.java .fragment}                                                 |
-| Employee :: Company -> Name -> Employee            | Employee (String company, String name) {..}                          |
-| tSystems = Employee "T-Systems"                    | Employee tSystems(String name) = Employee("T-Systems", name)         |
++----------------------------------------------------+------------------------------------------------------------------------+
+| ```{.haskell .fragment}                            | ```{.java .fragment}                                                   |
+| Employee :: Company -> Name -> Employee            | Employee (String company, String name) {..}                            |
+| tSystems = Employee "T-Systems"                    | Employee tSystems(String name) = Employee("T-Systems", name)           |
 | map tSystems ["Martin Heuschober" ..]              | List<String> employeeNames = new ArrayList<> (["Martin Heuschober"..]) |
-| map (Employee "T-Systems") ["Martin Heuschober"..] | employeeNames.map(tSystems)                                          |
-| ```                                                | ```                                                                  |
-+----------------------------------------------------+----------------------------------------------------------------------+
+| map (Employee "T-Systems") ["Martin Heuschober"..] | employeeNames.map(tSystems)                                            |
+| ```                                                | ```                                                                    |
++----------------------------------------------------+------------------------------------------------------------------------+
 
 Higher order functions
 ======================
@@ -205,7 +226,7 @@ Higher order functions
 
 +-------------------------------+------------------------------------------+
 | ```{.haskell .fragment}       | ```{.java .fragment}                     |
-| map :: (a -> b) -> [a] -> [b] | foreach (Elmtclass e : lst) {            |
+| map :: (a -> b) -> [a] -> [b] | for (Elmtclass e : lst) {                |
 | map _ [] = []                 |   e' = f(e)                              |
 | map f (x:xs) = f x : map f xs | }                                        |
 | ```                           | ```                                      |
@@ -229,21 +250,21 @@ Aber was bringt uns das?
 `fold`/`reduce`
 ---------------
 
-+-----------------------------------------+-------------------------------+
-| ```{.haskell .fragment}                 | ```{.java .fragment}          |
-| fold :: (a -> b -> a) -> a -> [b] -> a  | foreach (Elmtclass e : lst) { |
-| fold _ acc [] = acc                     |   acc = f(acc, e);            |
-| fold f acc (x:xs) = fold f (f acc x) xs | }                             |
-| ```                                     | return acc;                   |
-|                                         | ```                           |
-+-----------------------------------------+-------------------------------+
++-----------------------------------------+---------------------------+
+| ```{.haskell .fragment}                 | ```{.java .fragment}      |
+| fold :: (a -> b -> a) -> a -> [b] -> a  | for (Elmtclass e : lst) { |
+| fold _ acc [] = acc                     |   acc = f(acc, e);        |
+| fold f acc (x:xs) = fold f (f acc x) xs | }                         |
+| ```                                     | return acc;               |
+|                                         | ```                       |
++-----------------------------------------+---------------------------+
 
 `filter`
 --------
 
 +------------------------------------------------------------+--------------------------------+
 | ```{.haskell .fragment}                                    | ```{.java .fragment}           |
-| filter :: (a -> Bool) -> [a] -> [a]                        | foreach (Elmtclass e : lst) {  |
+| filter :: (a -> Bool) -> [a] -> [a]                        | for (Elmtclass e : lst) {      |
 | filter _ [] = []                                           |   if (p(e)) newlist.append(e); |
 | filter p (x:xs) = let xs' = filter p xs                    | }                              |
 |                    in if p x then x : xs' else xs'         | return newlist;                |
@@ -257,30 +278,30 @@ Aber was bringt uns das?
 `all`/`any`
 -----------
 
-+---------------------------------------------+-------------------------------+
-| ```{.haskell .fragment}                     | ```{.java .fragment}          |
-| any :: (a -> Bool) -> [a] -> Bool           | foreach (Elmtclass e : lst) { |
-| any _ [] = False                            |   if (p(e)) return true;      |
-| any p (x:xs) = if p x then True             | }                             |
-|                       else any p xs         | return false;                 |
-| ```                                         | ```                           |
-+---------------------------------------------+-------------------------------+
-| ```{.haskell .fragment}                     | ```{.java .fragment}          |
-| all :: (a -> Bool) -> [a] -> Bool           | foreach (Elmtclass e : lst) { |
-| all _ [] = True                             |   if (!p(e)) return false;    |
-| all p (x:xs) = p x && all p xs              | }                             |
-| ```                                         | return true;                  |
-|                                             | ```                           |
-+---------------------------------------------+-------------------------------+
-| ```{.haskell .fragment}                     |                               |
-| any p = foldr (\y acc -> p y || acc ) False |                               |
-| all p = foldr (\y acc -> p y && acc ) True  |                               |
-| ```                                         |                               |
-+---------------------------------------------+-------------------------------+
-| ```{.haskell .fragment}                     |                               |
-| all p = not . all (not . p)                 |                               |
-| ```                                         |                               |
-+---------------------------------------------+-------------------------------+
++---------------------------------------------+----------------------------+
+| ```{.haskell .fragment}                     | ```{.java .fragment}       |
+| any :: (a -> Bool) -> [a] -> Bool           | for (Elmtclass e : lst) {  |
+| any _ [] = False                            |   if (p(e)) return true;   |
+| any p (x:xs) = if p x then True             | }                          |
+|                       else any p xs         | return false;              |
+| ```                                         | ```                        |
++---------------------------------------------+----------------------------+
+| ```{.haskell .fragment}                     | ```{.java .fragment}       |
+| all :: (a -> Bool) -> [a] -> Bool           | for (Elmtclass e : lst) {  |
+| all _ [] = True                             |   if (!p(e)) return false; |
+| all p (x:xs) = p x && all p xs              | }                          |
+| ```                                         | return true;               |
+|                                             | ```                        |
++---------------------------------------------+----------------------------+
+| ```{.haskell .fragment}                     |                            |
+| any p = foldr (\y acc -> p y || acc ) False |                            |
+| all p = foldr (\y acc -> p y && acc ) True  |                            |
+| ```                                         |                            |
++---------------------------------------------+----------------------------+
+| ```{.haskell .fragment}                     |                            |
+| all p = not . all (not . p)                 |                            |
+| ```                                         |                            |
++---------------------------------------------+----------------------------+
 
 Typsystem
 =========
@@ -294,7 +315,7 @@ Info
 Mein Problem mit schwachen Typsystemen
 --------------------------------------
 
-(Almost) From the documentation of nodejs:
+Aus der Dokumentation von node.js (fast wortgetreu)
 [`fs.openSync(path, flags[, mode])`](https://nodejs.org/api/fs.html#fs_fs_opensync_path_flags_mode)
 
 . . .
@@ -400,6 +421,12 @@ runParser :: Parser a -> String -> Either String a
 ```
 
 ```{.haskell .fragment}
+case runParser ipv4 "127.-1.120.255"
+  of Left msg -> do something with errormessage
+     Right x -> do something with result
+```
+
+```{.haskell .fragment}
 ipv4 :: Parser IPv4
 ipv4 = do a <- check =<< decimal
           dot
@@ -413,14 +440,8 @@ ipv4 = do a <- check =<< decimal
         dot = void $ char '.'
         check :: Integral -> Parser Word8
         check x = do unless (0 <= x && x <= 256) $
-                       fail ("failed parsing IPv4 address for " ++ show x)
+                       fail "Failed parsing IPv4"
                      return $ fromIntegral x
-```
-
-```{.haskell .fragment}
-case runParser ipv4 "127.-1.120.255"
-  of Left msg -> do something with errormessage
-     Right x -> do something with result
 ```
 
 Typinferez
@@ -470,32 +491,152 @@ Und man sich klauen kann
 Generics verwenden und Arrays vermeiden
 ---------------------------------------
 
-    ```{.java .fragment}
-        public static void main(String[] args) {
-            List <Shape> lst = new ArrayList<>();
-            lst.add(new Circle(1.0));
-            lst.add(new Square(1.0));
-            for (Shape s : lst) {
-               System.out.println(s.area());
-            }
-            Circle[] circles = new Circle[2];
-            Shape[] arr = circles;
-            arr[0] = new Circle(1.0);
-            arr[1] = new Square(1.0);
-            for (Shape s : arr) {
-               System.out.println(s);
-            }
-        }
-    ```
+```{.java .fragment}
+public static void main(String[] args) {
+    Circle[] circles = new Circle[2];
+    Shape[] arr = circles;
+    arr[0] = new Circle(1.0);
+    arr[1] = new Square(1.0);
+    for (Shape s : arr) {
+       System.out.println(s);
+    }
+}
+```
 
-- `@NonNullable`/`@Nullable`
+```{.java .fragment}
+public static void main(String[] args) {
+    List <Circle> lst = new ArrayList<>();
+    lst.add(new Circle(1.0));
+    lst.add(new Square(1.0));
+    for (Shape s : lst) {
+       System.out.println(s.area());
+    }
+}
+```
+
+
+Haskell ist pure
+----------------
+
+- `NonNullable`/`@Nullable` verwenden
 - IO minimieren
 - mutable State minimieren - z.B. `List.append(x)` verändert eine Liste und ist daher eine schlechte Idee
+
+. . .
+
 - Abstraktionen wie Funktor, Applicative, Monad, Monoid etc.
 
+Fundamental theorem of software engineering
+-------------------------------------------
+
+> "We can solve any problem by introducing an extra level of indirection."
+
+Butler Lampson
+
+Functor
+=======
+
+What?
+-----
+
+Ziel: Einen Container-Datentyp elementweise verändern, aber die Struktur des Containers beibehalten.
+Warum: Fast jeder Container hat diese Eigenschaft.
+
+Haskell
+-------
+
+```haskell
+class Functor c where
+    fmap :: (a -> b) -> c a -> c b
+```
+
+```haskell
+data [a] = ..
+data Maybe a = Nothing | Just a
+data Tree a = Empty
+            | Tree { label :: a
+                   , leftBranch  :: Tree a
+                   , rightBranch :: Tree a }
+data RoseTree a = RoseTree { label :: a
+                           , children :: [RoseTree a]
+                           }
+data IntMap a = ..
+```
+
 --------------------------------------------------------------------------------
+
+```{.haskell .fragment}
+instance Functor [] where
+  fmap _ [] = []
+  fmap f (x:xs) = f x : fmap f xs
+```
+
+```{.haskell .fragment}
+instance Functor Maybe where
+  fmap _ Nothing = Nothing
+  fmap f (Just a) = Just (f a)
+```
+
+```{.haskell .fragment}
+instance Functor Tree where
+  fmap _ Empty = Empty
+  fmap f (Tree x lB rB) = Tree (f x) (fmap f lB) (fmap f rB)
+```
+
+```{.haskell .fragment}
+instance Functor Tree where
+  fmap f (RoseTree x xs) = RoseTree (f x) (fmap (fmap f) xs)
+```
+
+Java
+----
+
+```java
+import java.util.function.Function;
+
+interface Functor<T> {
+    <R> Functor<R> fmap(Function<T, R> f);
+}
+
+interface Functor<T,F extends Functor<?,?>> {
+    <R> F fmap(Function<T,R> f);
+}
+
+class Identity<T> implements Functor<T,Identity<?>> {
+    private final T value;
+
+    Identity(T value) { this.value = value; }
+
+    public <R> Identity<R> fmap(Function<T,R> f) {
+        final R result = f.apply(value);
+        return new Identity<>(result);
+    }
+}
+```
+
+
+Links
+=====
+
+Haskell
+-------
+
+- [haskell.org](https://www.haskell.org)
+- [Learn you a haskell for great good](http://learnyouahaskell.com)
+- [Real World Haskell](http://book.realworldhaskell.org/)
+- [WebFramework: Yesod](https://www.yesodweb.com/)
+- [Parallel and concurrent programming in haskell](http://chimera.labs.oreilly.com/books/1230000000929)
+- [hoogle](https://www.haskell.org/hoogle)
+
+Java
+----
+
+- [Java8 - Berlin clock kata](https://technologyconversations.com/2014/02/25/java-8-tutorial-through-katas-berlin-clock-easy/)
 
 [Tiobe - Programmiersprachen]: ./img/tiobe.com-12.6.2017.png "Tiobe - Programmiersprachen" {width=700px}
 [Tiobe - Haskell]: ./img/tiobe.com-12.6.2017-haskell.png "Tiobe - Haskell" {width=700px}
 [Timeline - Haskell]: ./img/history_of_programming_languages-haskell.png "Timeline - Haskell"
 [Timeline - Java]: ./img/history_of_programming_languages-java.png "Timeline - Java"
+[Java8]: https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html
+[History of Programming languages]:(http://cdn.oreillystatic.com/news/graphics/prog_lang_poster.pdf)
+[Aufgabe: (Stackoverflow)]: https://stackoverflow.com/questions/43493437/haskell-replicate-function/43494383#43494383
