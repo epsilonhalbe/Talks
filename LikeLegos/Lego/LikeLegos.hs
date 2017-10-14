@@ -9,7 +9,7 @@ data Color = Black | Red     | Green | Yellow
 
 type Brick = [String]
 data Dimension = Dim {_x :: Int, y :: Int}
-data Lego = Lego {dim :: Dimension, _color :: Color}
+data Lego = Brick {dim :: Dimension, _color :: Color}
 data STRego = STRego String [String] String
 
 instance Show Dimension where
@@ -22,10 +22,10 @@ instance Show STRego where
   show (STRego t m b) = unlines ([""]++[t]++m++[b])
 
 brick :: Int -> Int -> Color -> Lego
-brick a b = Lego (a × b)
+brick a b = Brick (a × b)
 
 strLego ::  Lego -> STRego
-strLego (Lego (Dim α β) col)= STRego t (replicate β m) b
+strLego (Brick (Dim α β) col)= STRego t (replicate β m) b
     where t = fg col (" " ++ replicate (2*α-1) '_' ++" ")
           b = fg col (" " ++ replicate (2*α-1) '‾' ++" ")
           m = fg col "│" ++
@@ -49,7 +49,7 @@ pprint :: [Lego] -> IO ()
 pprint = putStr . unlines . combine . strLegos
 
 strExt :: Int -> Lego -> Brick
-strExt n lego@(Lego (Dim α β) _)
+strExt n lego@(Brick (Dim α β) _)
     = let STRego t m b = strLego lego
           line   = replicate (2*α+1) ' '
       in [t] ++ m ++ [b] ++
@@ -71,13 +71,13 @@ _turn :: Dimension -> Dimension
 _turn (Dim a b) = b × a
 
 turn :: Lego -> Lego
-turn (Lego d c) = Lego (_turn d) c
+turn (Brick d c) = Brick (_turn d) c
 
 setX ::  Int -> Lego -> Lego
-setX n (Lego (Dim _ β) c)= Lego (Dim n β) c
+setX n (Brick (Dim _ β) c)= Brick (Dim n β) c
 
 setY ::  Int -> Lego -> Lego
-setY n (Lego (Dim α _) c)= Lego (Dim α n) c
+setY n (Brick (Dim α _) c)= Brick (Dim α n) c
 
 setColor :: Color -> Lego -> Lego
-setColor c (Lego d _)= Lego d c
+setColor c (Brick d _)= Brick d c

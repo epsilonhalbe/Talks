@@ -74,7 +74,7 @@ Stark typisiert
 ---------------
 
 So wie jeder Legostein eine fixe Länge, Breite und Farbe hat, so besitzt
-alles in Haskell einen Typ. `Lego (1 × 4) Red` ist vom Typ Lego (geschrieben
+alles in Haskell einen Typ. `Brick (1 × 4) Red` ist vom Typ Lego (geschrieben
 `:: Lego`). Diese Typen werden vom Compiler überprüft, d.h. wo in meinem
 Quellcode ein `Lego` erwartet wird kann ich keinen `Duplo` Baustein verwenden.
 
@@ -149,7 +149,7 @@ Haskell erlaubt es auch sich eigene Typen auszudenken.
 data Color = Black | Red     | Green | Yellow
            | Blue  | Magenta | Cyan  | White
 data Dimension = Dim {x :: Int, y :: Int}
-data Lego = Lego {dim :: Dimension, color :: Color}
+data Lego = Brick {dim :: Dimension, color :: Color}
 ```
 
 
@@ -241,7 +241,7 @@ $> ghci LikeLegos.hs
 
 
 ```haskell
-let lego = Lego (1×4)
+let lego = Brick (1×4)
 let colors = [Black .. White]
 map lego colors
 pprint $ map lego colors
